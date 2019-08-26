@@ -1,15 +1,7 @@
 <template>
-    <!-- <b-container fluid class="p-0 m-0">
+    <div class="w-75 h-100 p-0 m-0 mx-auto bg-success">
         <Navbar />
         <router-view></router-view>
-        <Footer />
-    </b-container> -->
-
-    <div class="h-100 bg-info m-0 p-0">
-        <Navbar />
-        <b-container fluid>
-            <router-view></router-view>
-        </b-container>
         <Footer />
     </div>
 </template>

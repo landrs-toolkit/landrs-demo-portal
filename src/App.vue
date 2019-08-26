@@ -1,9 +1,10 @@
 <template>
-  <div class="h-100 w-100 bg-info m-0 p-0">
+  <div class="vw-100 min-vw-100 vh-100 min-vh-100 p-0 m-0 bg-secondary">
     <notifications position="bottom left" />
 
+    <LoginDialog />
     <!-- <div>
-      <LoginDialog />
+      
       <MessageDialog />
       <LoadingDialog />
     </div> -->

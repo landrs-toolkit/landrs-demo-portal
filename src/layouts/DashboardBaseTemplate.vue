@@ -1,5 +1,5 @@
 <template>
-    <v-content>
+    <!-- <v-content>
         <v-container fluid fill-height>
             <v-layout column>
                 <Navbar />
@@ -9,7 +9,25 @@
                 <Footer />
             </v-layout>
         </v-container>
-    </v-content>
+    </v-content> -->
+
+
+    <div class="w-100 h-100 p-0 m-0 bg-warning">
+        <b-container class="h-100">
+            <b-row class="h-100">
+                <b-col sm="3" md="2" class="bg-danger">
+                    <Navbar />
+                </b-col>
+                <b-col sm="9" md="10" class="bg-success">
+                    <router-view></router-view>
+                </b-col>
+            </b-row>
+        </b-container>
+
+        <Footer />
+
+    </div>
+
 </template>
 
 <script>
@@ -36,15 +54,15 @@
             Navbar,
             Footer
         },
-        beforeRouteEnter (to, from, next) {
+        beforeRouteEnter(to, from, next) {
             store.dispatch('setBaseComponent', 'DashboardBaseTemplate');
             next();
         },
-        beforeRouteUpdate (to, from, next) {
+        beforeRouteUpdate(to, from, next) {
             this.setBaseComponent('DashboardBaseTemplate');
             next();
         },
-        created: function() {
+        created: function () {
             this.setBaseComponent('DashboardBaseTemplate')
         },
         methods: {

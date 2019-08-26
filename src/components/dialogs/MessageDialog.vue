@@ -40,6 +40,14 @@
 
     </v-dialog>
   </v-layout>
+
+
+  <!-- <b-modal id="modal-no-backdrop" hide-backdrop content-class="shadow" title="BootstrapVue">
+    <p class="my-2">
+      We've added the utility class <code>'shadow'</code>
+      to the modal content for added effect.
+    </p>
+  </b-modal> -->
 </template>
 
 <script>

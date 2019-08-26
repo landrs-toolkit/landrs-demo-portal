@@ -1,20 +1,17 @@
 <template>
-    <v-container fluid fill-height>
+    <div class="h-75 mx-auto text-center">
+        <div class="h-25"></div>
+        <h1 class="display-1">404</h1>
+        <h1 class="display-1">Page Not Found</h1>
 
-        <v-layout column class="justify-center">
-            <br><br><br>
-            <h1 class="text-center">Page Not Found!</h1>
-
-            <v-row>
-                <v-col></v-col>
-                <v-col md="3">
-                    <v-btn depressed x-large block color="primary" @click="goBack">Go Back</v-btn>
-                </v-col>
-                <v-col></v-col>
-            </v-row>
-        </v-layout>
-
-    </v-container>
+        <b-container>
+            <b-row>
+                <b-col class="col-12 col-md-8 offset-md-2">
+                    <b-button block size="lg" variant="secondary" @click="goBack()">Go Back</b-button>
+                </b-col>
+            </b-row>
+        </b-container>
+    </div>
 </template>
 
 <script>

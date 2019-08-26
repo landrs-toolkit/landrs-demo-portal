@@ -1,10 +1,7 @@
 <template>
-    <v-container fluid fill-height>
-        <v-layout column align-start justify-start>
-            <h2 class="headline">Welcome to the Dashboard!</h2>
-            <v-divider></v-divider>
-        </v-layout>
-    </v-container>
+    <div class="h-100 bg-warning">
+        <b-jumbotron header="Dashboard" lead="Do stuff here!"></b-jumbotron>
+    </div>
 </template>
 
 <script>

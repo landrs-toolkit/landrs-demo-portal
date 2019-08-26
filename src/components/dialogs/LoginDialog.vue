@@ -1,32 +1,8 @@
 <template>
-    <v-layout justify-center>
+    <!-- <v-layout justify-center>
         <v-dialog v-model="loginDialog" persistent max-width="600px">
             <template v-slot:activator="{ on }">
-                <!-- <v-btn color="primary" dark v-on="on">Open Dialog</v-btn> -->
             </template>
-            <!-- <v-card>
-                <v-card-title>
-                    <span class="headline">Login</span>
-                </v-card-title>
-                <v-card-text>
-                    <v-container grid-list-md>
-                        <v-layout wrap>
-                            <v-flex xs12>
-                                <v-text-field label="Email*" required></v-text-field>
-                            </v-flex>
-                            <v-flex xs12>
-                                <v-text-field label="Password*" type="password" required></v-text-field>
-                            </v-flex>
-                        </v-layout>
-                    </v-container>
-                    <small>*indicates required field</small>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
-                    <v-btn color="blue darken-1" text @click="dialog = false">Save</v-btn>
-                </v-card-actions>
-            </v-card> -->
 
             <v-alert :value="alert" type="error">
                 Could not log you in!
@@ -53,7 +29,25 @@
 
 
         </v-dialog>
-    </v-layout>
+    </v-layout> -->
+
+    <b-modal title="Sign In" v-model="loginDialog" centered no-close-on-esc no-close-on-backdrop hide-header-close hide-footer>
+        <b-container fluid>
+
+            <b-row class="my-1">
+                <b-col sm="12">
+                    <b-form-input size="lg" v-model="payload.username" placeholder="Identity"></b-form-input>
+                </b-col>
+                <b-col sm="12">
+                    <b-form-input type="password" size="lg" v-model="payload.password" placeholder="Password" @keypress.enter="login()"></b-form-input>
+                </b-col>
+            </b-row>
+
+        </b-container>
+
+        <b-button class="mt-3" variant="primary" block size="lg" @click="login()">Sign In</b-button>
+        <b-button class="mt-2" variant="warning" block size="lg" @click="cancel()">Cancel</b-button>
+    </b-modal>
 </template>
 
 <script>
@@ -106,13 +100,14 @@
                     that.alert = true;
                     return;
                 }
-                
+
                 // Attempt a login
                 HTTP.post('/users/api/token/', that.$data.payload).then(response => {
                     // Set token, updated HTTP with the Authorization token and set the base component to the 'Back' template.
                     that.setAuthorizationToken(response.data);
-                    HTTP.defaults.headers.common['Authorization'] = that.getAuthorizationHeader.Authorization;
-                    
+                    HTTP.defaults.headers.common['Authorization'] = that.getAuthorizationHeader
+                        .Authorization;
+
                     that.$notify({
                         text: 'You have been logged in',
                         duration: 10000,
@@ -122,13 +117,14 @@
                     // HTTP.defaults.headers.common['Authorization'] = 'test';
                     that.getUser().then(res => {
                         that.setUser(res.data);
-                    }).catch(() => {
-                    }).finally(() => {
+                    }).catch(() => {}).finally(() => {
                         that.hide();
 
                         // Navigate to next if set, otherwise, go to user page.
                         if (that.$route.query.next) {
-                            that.$router.push({path: that.$route.query.next});
+                            that.$router.push({
+                                path: that.$route.query.next
+                            });
                         }
                     });
                 }).catch(() => {

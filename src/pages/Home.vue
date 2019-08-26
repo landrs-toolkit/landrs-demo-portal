@@ -1,8 +1,7 @@
 <template>
-  <div>
-    <b-jumbotron header="BootstrapVue" lead="Bootstrap v4 Components for Vue.js 2">
-      <p>Welcome to BVCC - Bootstrap Vue Cookie Cutter</p>
-    </b-jumbotron>
+  <div class="h-100 bg-warning">
+    <div style="height: 10%;"></div>
+    <b-jumbotron header="Bootstrap Vue Cookie Cutter" lead="We bout it bout it"></b-jumbotron>
   </div>
 </template>
 

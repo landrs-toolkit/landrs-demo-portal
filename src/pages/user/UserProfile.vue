@@ -1,26 +1,23 @@
 <template>
-    <v-card class="mx-auto" max-width="400" tile>
-        <v-card-text justify-center>
-            <v-img
-                class="elevation-6"
-                src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
-            ></v-img>
-        </v-card-text>
-        <v-card-title>{{user.name || user.email}}</v-card-title>
 
-        <v-list-item two-line>
-            <v-list-item-content>
-                <v-list-item-title>Email</v-list-item-title>
-                <v-list-item-subtitle>{{user.email}}</v-list-item-subtitle>
-            </v-list-item-content>
-        </v-list-item>
-        <v-list-item two-line>
-            <v-list-item-content>
-                <v-list-item-title>Username</v-list-item-title>
-                <v-list-item-subtitle>{{user.username}}</v-list-item-subtitle>
-            </v-list-item-content>
-        </v-list-item>
-    </v-card>
+    <div>
+        <b-card
+            img-src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
+            img-alt="Image" img-top tag="article" style="max-width: 20rem;" class="mb-2">
+            <b-card-title>
+                {{user.name || user.email}}
+            </b-card-title>
+            <b-list-group flush>
+                <b-list-group-item>
+                    <strong>Email: </strong> {{user.email}}
+                </b-list-group-item>
+                <b-list-group-item>
+                    <strong>Username: </strong> {{user.username}}
+                </b-list-group-item>
+            </b-list-group>
+        </b-card>
+    </div>
+
 </template>
 
 <script>

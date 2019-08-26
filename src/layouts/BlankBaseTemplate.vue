@@ -1,13 +1,8 @@
 <template>
-    <v-content>
-        <!-- <Navbar /> -->
-
-        <v-container fluid fill-height>
-            <v-layout column>
-                <router-view></router-view>
-            </v-layout>
-        </v-container>
-    </v-content>
+    <div class="w-75 h-100 p-0 m-0 mx-auto bg-warning">
+        <router-view></router-view>
+        <Footer />
+    </div>
 </template>
 
 <script>
@@ -18,6 +13,8 @@
 
     import BaseDialogMixin from '@/components/mixins/BaseDialogMixin.vue';
     import BaseAlertMixin from '@/components/mixins/BaseAlertMixin.vue';
+    import Footer from '@/components/frontend/Footer.vue';
+
     import {
         mapActions
     } from 'vuex';
@@ -26,6 +23,9 @@
 
     export default {
         mixins: [BaseDialogMixin, BaseAlertMixin],
+        components: {
+            Footer
+        },
         beforeRouteEnter(to, from, next) {
             // this.setBaseComponent('BlankBaseTemplate.vue');
             store.dispatch('setBaseComponent', 'BlankBaseTemplate');
