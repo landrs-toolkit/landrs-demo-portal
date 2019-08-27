@@ -2,14 +2,17 @@
 
     <div class="w-100 h-100 p-0 m-0">
         
-        <div class="container-fluid w-100 h-100 bg-light">
+        <div class="container-fluid w-100 h-100 m-0 p-0">
             <div class="h-100 row no-gutters">
-                <div :class="{'col-sm-3': sidebar, 'col-md-2': sidebar, '': !sidebar}" class="bg-danger" v-if="sidebar">
+                <div :class="{'col-sm-3': sidebar, 'col-md-2': sidebar, '': !sidebar}" v-if="sidebar">
                     <SideNavbar />
                 </div>
-                <div :class="{'col-sm-9': sidebar, 'col-md-10': sidebar, 'col-12': !sidebar}" class="bg-success">
+                <div :class="{'col-sm-9': sidebar, 'col-md-10': sidebar, 'col-12': !sidebar}">
                     <TopNavbar />
-                    <router-view></router-view>
+                    
+                    <div class="w-100 h-100 p-3">
+                        <router-view></router-view>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="w-75 h-100 p-0 m-0 mx-auto bg-success">
+    <div class="w-75 h-100 p-0 m-0 mx-auto">
         <Navbar />
         <router-view></router-view>
         <Footer />

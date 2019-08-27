@@ -42,15 +42,18 @@
         },
         mounted: function () {
             let that = this;
-            that.showLoadingDialog('Fetching information!');
             
-            that.getUser().then(response => {
-                that.setUser(response.data);
-            }).catch(error => {
-                HandleErrors.HandleErrors(error);
-            }).finally(() => {
-                that.hideLoadingDialog();
-            });
+            if(!that.user.email) {
+                that.showLoadingDialog('Fetching information!');
+            
+                that.getUser().then(response => {
+                    that.setUser(response.data);
+                }).catch(error => {
+                    HandleErrors.HandleErrors(error);
+                }).finally(() => {
+                    that.hideLoadingDialog();
+                });
+            }
         },
         methods: {
             ...mapActions('user',

@@ -1,7 +1,7 @@
 <template>
 
-    <footer class="footer fixed-bottom mt-auto py-3 bg-dark">
-        <div class="w-75 mx-auto text-left">
+    <footer class="footer fixed-bottom mt-auto py-3">
+        <div class="w-75 mx-auto text-center">
             <span class="text-muted">
                 <span>{{ new Date().getFullYear() }} — <strong>#techsense</strong></span>
                 <span class="mx-3">|</span>

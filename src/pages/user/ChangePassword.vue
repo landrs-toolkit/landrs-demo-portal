@@ -38,13 +38,7 @@
     import {
         HTTP
     } from '@/utilities/http-common';
-
-    import {
-        mapGetters,
-        mapActions,
-        mapState
-    } from 'vuex';
-
+    
     import DashboardBaseTemplate from '@/layouts/DashboardBaseTemplate.vue'
 
     export default {

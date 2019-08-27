@@ -1,5 +1,5 @@
 <template>
-  <div class="vw-100 min-vw-100 vh-100 min-vh-100 p-0 m-0 bg-secondary">
+  <div class="vw-100 min-vw-100 vh-100 min-vh-100 p-0 m-0">
     <notifications position="bottom left" />
 
     <LoginDialog />

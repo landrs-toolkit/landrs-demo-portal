@@ -1,6 +1,6 @@
 <template>
 
-    <div>
+    <div class="h-100 sidebar">
         <div class="sidebar-sticky">
             <ul class="nav flex-column">
                 <li class="nav-item">
@@ -30,6 +30,9 @@
                         Change Password
                     </b-link>
                 </li>
+            </ul>
+            <hr>
+            <ul class="nav flex-column">
                 <li class="nav-item">
                     <b-link class="nav-link" @click="logout()">
                         <i class="fas fa-times"></i>
@@ -90,5 +93,32 @@
 </script>
 
 <style>
+    .sidebar {
+        background-color: whitesmoke;
+        box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        padding-top: 15px;
+    }
+    .sidebar .nav-link {
+        font-weight: 500;
+        color: #666;
+    }
 
+    .sidebar .nav-link .feather {
+        margin-right: 4px;
+        color: #999;
+    }
+
+    .sidebar .nav-link.active {
+        color: #007bff;
+    }
+
+    .sidebar .nav-link:hover .feather,
+    .sidebar .nav-link.active .feather {
+        color: inherit;
+    }
+
+    .sidebar-heading {
+        font-size: .75rem;
+        text-transform: uppercase;
+    }
 </style>

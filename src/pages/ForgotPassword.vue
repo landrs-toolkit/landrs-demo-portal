@@ -1,5 +1,5 @@
 <template>
-    <b-container fluid class="h-100 bg-danger">
+    <b-container fluid class="h-100">
         <div class="h-25"></div>
         <b-row>
             <b-col sm="12" md="6" offset-md="3">
@@ -23,11 +23,7 @@
     import {
         HTTP
     } from '@/utilities/http-common';
-
-    import {
-        mapState
-    } from 'vuex';
-
+    
     import store from '@/store/store';
     import BaseTemplate from '@/layouts/BaseTemplate.vue'
 
