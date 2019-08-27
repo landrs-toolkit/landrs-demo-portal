@@ -4,11 +4,14 @@ import Home from './pages/Home.vue'
 import Login from './pages/Login.vue'
 
 import Register from './pages/Register.vue'
+import ForgotPassword from './pages/ForgotPassword.vue'
 
-import PageNotFound from './pages/PageNotFound.vue';
 import DashboardRoot from './pages/dashboard/DashboardRoot.vue';
 import Dashboard from './pages/dashboard/Dashboard.vue';
 import UserProfile from './pages/user/UserProfile.vue';
+import ChangePassword from './pages/user/ChangePassword.vue'
+
+import PageNotFound from './pages/PageNotFound.vue';
 
 import store from './store/store';
 
@@ -56,6 +59,12 @@ const router = new Router({
       meta: { component: 'BaseTemplate' },
     },
     {
+      path: '/forgot-password/',
+      name: 'forgot-password',
+      component: ForgotPassword,
+      meta: { component: 'BaseTemplate' },
+    },
+    {
       path: '/dashboard/',
       component: DashboardRoot,
       meta: { requiresAuth: true, component: 'DashboardBaseTemplate' },
@@ -68,6 +77,11 @@ const router = new Router({
           path: 'user',
           name: 'user',
           component: UserProfile
+        },
+        {
+          path: 'change-password',
+          name: 'change-password',
+          component: ChangePassword
         }
       ]
     },

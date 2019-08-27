@@ -1,19 +1,35 @@
 <template>
-    <b-container fluid>
-
-        <b-row class="my-1">
-            <b-col sm="12">
-                <b-form-input size="lg" v-model="payload.username" placeholder="Identity"></b-form-input>
-            </b-col>
-            <b-col sm="12">
-                <b-form-input type="password" size="lg" v-model="payload.password" placeholder="Password"
-                    @keypress.enter="login()"></b-form-input>
+    <b-container fluid class="h-100 bg-danger">
+        <div class="h-25"></div>
+        <b-row>
+            <b-col sm="12" md="6" offset-md="3">
+                <b-form-input size="lg" v-model="form.name" placeholder="Name"></b-form-input>
             </b-col>
         </b-row>
 
         <b-row>
-            <b-col>
-                <b-button class="mt-3" variant="primary" block size="lg" @click="login()">Sign In</b-button>
+            <b-col sm="6" md="3" offset-md="3">
+                <b-form-input size="lg" v-model="form.email" placeholder="Email"></b-form-input>
+            </b-col>
+            <b-col sm="6" md="3">
+                <b-form-input size="lg" v-model="form.username" placeholder="Username"></b-form-input>
+            </b-col>
+        </b-row>
+
+        <b-row>
+            <b-col sm="6" md="3" offset-md="3">
+                <b-form-input type="password" size="lg" v-model="form.password" placeholder="Password"></b-form-input>
+            </b-col>
+            <b-col sm="6" md="3">
+                <b-form-input type="password" size="lg" v-model="form.confirm_password" placeholder="Confirm Password"></b-form-input>
+            </b-col>
+        </b-row>
+
+        <b-row>
+            <b-col sm="6" md="3" offset-md="3">
+                <b-button class="mt-2" variant="primary" block size="lg" @click="register()">Sign Up</b-button>
+            </b-col>
+            <b-col sm="6" md="3">
                 <b-button class="mt-2" variant="warning" block size="lg" @click="cancel()">Cancel</b-button>
             </b-col>
         </b-row>
@@ -40,7 +56,7 @@
             }
         },
         data: () => ({
-            payload: {
+            form: {
                 username: '',
                 password: '',
                 grant_type: process.env.VUE_APP_GRANT_TYPE,
@@ -63,17 +79,16 @@
             ...mapActions('dialog', ['hideLoginDialog']),
             ...mapActions('alert', ['setSuccess', 'setError']),
             ...mapActions('user', ['setUser', 'getUser']),
-            login: function () {
+            register: function () {
                 let that = this;
                 that.alert = false;
 
-                if (!that.$data.payload.username.trim() || !that.$data.payload.password.trim()) {
-                    that.alert = true;
+                if (!that.$data.form.username.trim() || !that.$data.form.password.trim()) {
                     return;
                 }
 
                 // Attempt a login
-                HTTP.post('/users/api/token/', that.$data.payload).then(response => {
+                HTTP.post('/users/api/token/', that.$data.form).then(response => {
                     // Set token, updated HTTP with the Authorization token and set the base component to the 'Back' template.
                     that.setAuthorizationToken(response.data);
 
@@ -100,18 +115,9 @@
                     });
                 }).catch(() => {
                     that.alert = true;
-                    that.payload.password = "";
                 });
             },
-            hide: function () {
-                this.payload.username = "";
-                this.payload.password = "";
-                this.alert = false;
-                this.hideLoginDialog()
-            },
             cancel: function () {
-                this.hide();
-
                 this.$router.push({
                     name: 'home'
                 });

@@ -1,22 +1,22 @@
 <template>
-    
-    <b-modal title="Sign In" v-model="loginDialog" centered no-close-on-esc no-close-on-backdrop hide-header-close hide-footer>
-        <b-container fluid>
+    <b-container fluid class="h-100 bg-danger">
+        <div class="h-25"></div>
+        <b-row>
+            <b-col sm="12" md="6" offset-md="3">
+                <b-form-input type="email" size="lg" v-model="form.email" placeholder="Email"></b-form-input>
+            </b-col>
+        </b-row>
 
-            <b-row class="my-1">
-                <b-col sm="12">
-                    <b-form-input size="lg" v-model="payload.username" placeholder="Identity"></b-form-input>
-                </b-col>
-                <b-col sm="12">
-                    <b-form-input type="password" size="lg" v-model="payload.password" placeholder="Password" @keypress.enter="login()"></b-form-input>
-                </b-col>
-            </b-row>
+        <b-row>
+            <b-col sm="6" md="3" offset-md="3">
+                <b-button class="mt-2" variant="primary" block size="lg" @click="sendEmail()">Send Email</b-button>
+            </b-col>
+            <b-col sm="6" md="3">
+                <b-button class="mt-2" variant="warning" block size="lg" @click="cancel()">Cancel</b-button>
+            </b-col>
+        </b-row>
 
-        </b-container>
-
-        <b-button class="mt-3" variant="primary" block size="lg" @click="login()">Sign In</b-button>
-        <b-button class="mt-2" variant="warning" block size="lg" @click="cancel()">Cancel</b-button>
-    </b-modal>
+    </b-container>
 </template>
 
 <script>
@@ -25,91 +25,54 @@
     } from '@/utilities/http-common';
 
     import {
-        mapGetters,
-        mapActions,
         mapState
     } from 'vuex';
 
+    import store from '@/store/store';
+
     export default {
-        props: {
-            next: {
-                type: String,
-                default: ''
+        beforeRouteEnter(to, from, next) {
+            if(store.getters.isAuthenticated) {
+                next({name: 'dashboard'});
+            } else {
+                next();
             }
+            next();
         },
         data: () => ({
-            payload: {
-                username: '',
-                password: '',
-                grant_type: process.env.VUE_APP_GRANT_TYPE,
-                client_id: process.env.VUE_APP_CLIENT_ID,
-                client_secret: process.env.VUE_APP_CLIENT_SECRET
-            },
-            dialog: true,
-            alert: false
+            form: {
+                email: ''
+            }
         }),
         computed: {
-            ...mapState('dialog', ['loginDialog']),
-            ...mapGetters([
-                'getAuthorizationToken',
-                'getAuthorizationHeader',
-                'hasAuthorizationToken'
-            ])
+            ...mapState(['user']),
         },
         methods: {
-            ...mapActions(['setAuthorizationToken', 'setBaseComponent']),
-            ...mapActions('dialog', ['hideLoginDialog']),
-            ...mapActions('alert', ['setSuccess', 'setError']),
-            ...mapActions('user', ['setUser', 'getUser']),
-            login: function () {
+            sendEmail: function () {
                 let that = this;
-                that.alert = false;
-
-                if (!that.$data.payload.username.trim() || !that.$data.payload.password.trim()) {
-                    that.alert = true;
-                    return;
-                }
-
-                // Attempt a login
-                HTTP.post('/users/api/token/', that.$data.payload).then(response => {
-                    // Set token, updated HTTP with the Authorization token and set the base component to the 'Back' template.
-                    that.setAuthorizationToken(response.data);
-                    
+                
+                if (!that.$data.form.email.trim()) {
                     that.$notify({
-                        text: 'You have been logged in',
+                        text: 'Please enter valid email.',
                         duration: 10000,
                         type: 'success'
                     });
 
-                    // HTTP.defaults.headers.common['Authorization'] = 'test';
-                    that.getUser().then(res => {
-                        that.setUser(res.data);
-                    }).catch(() => {}).finally(() => {
-                        that.hide();
+                    return;
+                }
 
-                        // Navigate to next if set, otherwise, go to user page.
-                        if (that.$route.query.next) {
-                            that.$router.push({
-                                path: that.$route.query.next
-                            });
-                        } else {
-                            that.$router.go();// Reload the page.
-                        }
-                    });
+                // Send forgot password email.
+                HTTP.post('/users/api/sign-up/', that.$data.form).then(response => {
+                    
                 }).catch(() => {
-                    that.alert = true;
-                    that.payload.password = "";
+                    that.$notify({
+                        text: 'Account with email not found.',
+                        duration: 10000,
+                        type: 'success'
+                    });
                 });
             },
-            hide: function () {
-                this.payload.username = "";
-                this.payload.password = "";
-                this.alert = false;
-                this.hideLoginDialog()
-            },
             cancel: function () {
-                this.hide();
-
                 this.$router.push({
                     name: 'home'
                 });

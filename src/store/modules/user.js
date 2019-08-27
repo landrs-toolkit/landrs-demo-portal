@@ -1,6 +1,7 @@
 import {
     HTTP
 } from '@/utilities/http-common';
+import { stat } from 'fs';
 
 export default {
     namespaced: true,
@@ -11,6 +12,9 @@ export default {
     mutations: {
         setUser(state, user) {
             state.user = user;
+        },
+        getUser(state) {
+            return state.user;
         }
     },
     actions: {

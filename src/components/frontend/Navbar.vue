@@ -20,6 +20,10 @@
                     <i class="fas fa-key"></i>
                     Sign In
                 </b-nav-item>
+                <b-nav-item :to="{name: 'register'}" v-if="!user.email">
+                    <i class="fas fa-user-plus"></i>
+                    Sign Up
+                </b-nav-item>
             </b-navbar-nav>
         </b-navbar>
     </div>

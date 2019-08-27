@@ -16,6 +16,10 @@
 
         <b-button class="mt-3" variant="primary" block size="lg" @click="login()">Sign In</b-button>
         <b-button class="mt-2" variant="warning" block size="lg" @click="cancel()">Cancel</b-button>
+        
+        <div class="mt-3 text-center">
+            <b-link class="mt-2" @click="forgotPassword()">Forgot Password</b-link>
+        </div>
     </b-modal>
 </template>
 
@@ -113,7 +117,15 @@
                 this.$router.push({
                     name: 'home'
                 });
-            }
+            },
+            forgotPassword: function () {
+                this.hide();
+
+                this.$router.push({
+                    name: 'forgot-password'
+                });
+            },
+            
         }
     }
 </script>

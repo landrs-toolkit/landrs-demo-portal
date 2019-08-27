@@ -25,6 +25,12 @@
                     </b-link>
                 </li>
                 <li class="nav-item">
+                    <b-link class="nav-link" :to="{name: 'change-password'}">
+                        <i class="fas fa-key"></i>
+                        Change Password
+                    </b-link>
+                </li>
+                <li class="nav-item">
                     <b-link class="nav-link" @click="logout()">
                         <i class="fas fa-times"></i>
                         Sign Out

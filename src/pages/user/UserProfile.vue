@@ -1,21 +1,24 @@
 <template>
 
-    <div>
-        <b-card
-            img-src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
-            img-alt="Image" img-top tag="article" style="max-width: 20rem;" class="mb-2">
-            <b-card-title>
-                {{user.name || user.email}}
-            </b-card-title>
-            <b-list-group flush>
-                <b-list-group-item>
-                    <strong>Email: </strong> {{user.email}}
-                </b-list-group-item>
-                <b-list-group-item>
-                    <strong>Username: </strong> {{user.username}}
-                </b-list-group-item>
-            </b-list-group>
-        </b-card>
+    <div class="w-100 h-100">
+        <div class="w-100 h-25"></div>
+        <div class="w-100">
+            <b-card
+                img-src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
+                img-alt="" img-top tag="article" style="max-width: 20rem;" class="mb-2 mx-auto">
+                <b-card-title>
+                    {{user.name || user.email}}
+                </b-card-title>
+                <b-list-group flush>
+                    <b-list-group-item>
+                        <strong>Email: </strong> {{user.email}}
+                    </b-list-group-item>
+                    <b-list-group-item>
+                        <strong>Username: </strong> {{user.username}}
+                    </b-list-group-item>
+                </b-list-group>
+            </b-card>
+        </div>
     </div>
 
 </template>
@@ -40,8 +43,7 @@
         mounted: function () {
             let that = this;
             that.showLoadingDialog('Fetching information!');
-
-            // HTTP.defaults.headers.common['Authorization'] = 'test';
+            
             that.getUser().then(response => {
                 that.setUser(response.data);
             }).catch(error => {
