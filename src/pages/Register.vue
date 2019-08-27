@@ -21,7 +21,8 @@
                 <b-form-input type="password" size="lg" v-model="form.password" placeholder="Password"></b-form-input>
             </b-col>
             <b-col sm="6" md="3">
-                <b-form-input type="password" size="lg" v-model="form.confirm_password" placeholder="Confirm Password"></b-form-input>
+                <b-form-input type="password" size="lg" v-model="form.confirm_password" placeholder="Confirm Password">
+                </b-form-input>
             </b-col>
         </b-row>
 
@@ -48,73 +49,67 @@
         mapState
     } from 'vuex';
 
+    import BaseTemplate from '@/layouts/BaseTemplate.vue'
+
     export default {
-        props: {
-            next: {
-                type: String,
-                default: ''
-            }
-        },
+        mixins: [BaseTemplate],
         data: () => ({
             form: {
+                name: '',
+                email: '',
                 username: '',
                 password: '',
-                grant_type: process.env.VUE_APP_GRANT_TYPE,
-                client_id: process.env.VUE_APP_CLIENT_ID,
-                client_secret: process.env.VUE_APP_CLIENT_SECRET
-            },
-            dialog: true,
-            alert: false
+                confirm_password: ''
+            }
         }),
-        computed: {
-            ...mapState('dialog', ['loginDialog']),
-            ...mapGetters([
-                'getAuthorizationToken',
-                'getAuthorizationHeader',
-                'hasAuthorizationToken'
-            ])
-        },
         methods: {
-            ...mapActions(['setAuthorizationToken', 'setBaseComponent']),
-            ...mapActions('dialog', ['hideLoginDialog']),
-            ...mapActions('alert', ['setSuccess', 'setError']),
-            ...mapActions('user', ['setUser', 'getUser']),
             register: function () {
                 let that = this;
                 that.alert = false;
 
-                if (!that.$data.form.username.trim() || !that.$data.form.password.trim()) {
+                if (!that.$data.form.email.trim()) {
+                    that.$notify({
+                        text: 'Please enter a valid email.',
+                        duration: 10000,
+                        type: 'error'
+                    });
+
                     return;
                 }
 
-                // Attempt a login
-                HTTP.post('/users/api/token/', that.$data.form).then(response => {
-                    // Set token, updated HTTP with the Authorization token and set the base component to the 'Back' template.
-                    that.setAuthorizationToken(response.data);
-
+                if (!that.$data.form.username.trim()) {
                     that.$notify({
-                        text: 'You have been logged in',
+                        text: 'Please enter a username 3.',
+                        duration: 10000,
+                        type: 'error'
+                    });
+
+                    return;
+                }
+
+                if (!that.$data.form.password.trim() && (that.$data.form.password.trim() !== that.$data.form
+                        .confirm_password.trim())) {
+                    that.$notify({
+                        text: 'Passwords do not match.',
+                        duration: 10000,
+                        type: 'error'
+                    });
+
+                    return;
+                }
+
+                HTTP.post('/users/api/register/', that.$data.form).then(() => {
+                    that.$notify({
+                        text: 'You have been registered. Please sign in.',
                         duration: 10000,
                         type: 'success'
                     });
-
-                    // HTTP.defaults.headers.common['Authorization'] = 'test';
-                    that.getUser().then(res => {
-                        that.setUser(res.data);
-                    }).catch(() => {}).finally(() => {
-                        that.hide();
-
-                        // Navigate to next if set, otherwise, go to user page.
-                        if (that.$route.query.next) {
-                            that.$router.push({
-                                path: that.$route.query.next
-                            });
-                        } else {
-                            that.$router.go(); // Reload the page.
-                        }
-                    });
                 }).catch(() => {
-                    that.alert = true;
+                    that.$notify({
+                        text: 'Could not sign you up.',
+                        duration: 10000,
+                        type: 'error'
+                    });
                 });
             },
             cancel: function () {
