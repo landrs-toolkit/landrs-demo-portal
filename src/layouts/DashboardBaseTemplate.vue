@@ -1,19 +1,8 @@
 <template>
 
-    <div class="w-100 h-100 p-0 m-0 bg-warning">
-        <!-- <b-container class="h-100">
-            <b-row class="h-100">
-                <b-col sm="3" md="2" class="bg-danger" v-if="sidebar">
-                    <SideNavbar />
-                </b-col>
-                <b-col sm="9" md="10" class="bg-success">
-                    <TopNavbar />
-                    <router-view></router-view>
-                </b-col>
-            </b-row>
-        </b-container> -->
-
-        <div class="container h-100">
+    <div class="w-100 h-100 p-0 m-0">
+        
+        <div class="container-fluid w-100 h-100 bg-light">
             <div class="h-100 row no-gutters">
                 <div :class="{'col-sm-3': sidebar, 'col-md-2': sidebar, '': !sidebar}" class="bg-danger" v-if="sidebar">
                     <SideNavbar />

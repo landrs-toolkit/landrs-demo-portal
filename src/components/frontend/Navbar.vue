@@ -15,7 +15,7 @@
                     <i class="fas fa-user"></i>
                     Profile
                 </b-nav-item>
-                <b-nav-item>|</b-nav-item>
+                <b-nav-item v-if="!user.email">|</b-nav-item>
                 <b-nav-item :to="{name: 'login', query: { next: '/dashboard'}}" v-if="!user.email">
                     <i class="fas fa-key"></i>
                     Sign In

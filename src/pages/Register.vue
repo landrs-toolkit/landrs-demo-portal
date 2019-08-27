@@ -1,22 +1,24 @@
 <template>
-    
-    <b-modal title="Sign In" v-model="loginDialog" centered no-close-on-esc no-close-on-backdrop hide-header-close hide-footer>
-        <b-container fluid>
+    <b-container fluid>
 
-            <b-row class="my-1">
-                <b-col sm="12">
-                    <b-form-input size="lg" v-model="payload.username" placeholder="Identity"></b-form-input>
-                </b-col>
-                <b-col sm="12">
-                    <b-form-input type="password" size="lg" v-model="payload.password" placeholder="Password" @keypress.enter="login()"></b-form-input>
-                </b-col>
-            </b-row>
+        <b-row class="my-1">
+            <b-col sm="12">
+                <b-form-input size="lg" v-model="payload.username" placeholder="Identity"></b-form-input>
+            </b-col>
+            <b-col sm="12">
+                <b-form-input type="password" size="lg" v-model="payload.password" placeholder="Password"
+                    @keypress.enter="login()"></b-form-input>
+            </b-col>
+        </b-row>
 
-        </b-container>
+        <b-row>
+            <b-col>
+                <b-button class="mt-3" variant="primary" block size="lg" @click="login()">Sign In</b-button>
+                <b-button class="mt-2" variant="warning" block size="lg" @click="cancel()">Cancel</b-button>
+            </b-col>
+        </b-row>
 
-        <b-button class="mt-3" variant="primary" block size="lg" @click="login()">Sign In</b-button>
-        <b-button class="mt-2" variant="warning" block size="lg" @click="cancel()">Cancel</b-button>
-    </b-modal>
+    </b-container>
 </template>
 
 <script>
@@ -74,7 +76,7 @@
                 HTTP.post('/users/api/token/', that.$data.payload).then(response => {
                     // Set token, updated HTTP with the Authorization token and set the base component to the 'Back' template.
                     that.setAuthorizationToken(response.data);
-                    
+
                     that.$notify({
                         text: 'You have been logged in',
                         duration: 10000,
@@ -93,7 +95,7 @@
                                 path: that.$route.query.next
                             });
                         } else {
-                            that.$router.go();// Reload the page.
+                            that.$router.go(); // Reload the page.
                         }
                     });
                 }).catch(() => {

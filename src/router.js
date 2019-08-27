@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import Home from './pages/Home.vue'
 import Login from './pages/Login.vue'
 
+import Register from './pages/Register.vue'
+
 import PageNotFound from './pages/PageNotFound.vue';
 import DashboardRoot from './pages/dashboard/DashboardRoot.vue';
 import Dashboard from './pages/dashboard/Dashboard.vue';
@@ -45,6 +47,12 @@ const router = new Router({
       path: '/login/',
       name: 'login',
       component: Login,
+      meta: { component: 'BaseTemplate' },
+    },
+    {
+      path: '/register/',
+      name: 'register',
+      component: Register,
       meta: { component: 'BaseTemplate' },
     },
     {

@@ -3,7 +3,7 @@
         <b-navbar type="dark" variant="dark">
             <b-navbar-nav>
                 <b-btn squared variant="outline-light" @click="toggleSidebar()">
-                    <i class="fas fa-2x fa-bars"></i>
+                    <i class="fas fa-2x" :class="{'fa-bars': !sidebar, 'fa-times': sidebar, }"></i>
                 </b-btn>
             </b-navbar-nav>
 
@@ -30,7 +30,8 @@
             }
         },
         computed: {
-            ...mapState('user', ['user'])
+            ...mapState('user', ['user']),
+            ...mapState(['sidebar'])
         },
         methods: {
             ...mapActions([

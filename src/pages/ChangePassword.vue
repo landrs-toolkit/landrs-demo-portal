@@ -1,7 +1,6 @@
 <template>
     
-    <b-modal title="Sign In" v-model="loginDialog" centered no-close-on-esc no-close-on-backdrop hide-header-close hide-footer>
-        <b-container fluid>
+    <b-container fluid>
 
             <b-row class="my-1">
                 <b-col sm="12">
@@ -12,11 +11,16 @@
                 </b-col>
             </b-row>
 
+            <b-row>
+                <b-col>
+                    <b-button class="mt-3" variant="primary" block size="lg" @click="login()">Sign In</b-button>
+        <b-button class="mt-2" variant="warning" block size="lg" @click="cancel()">Cancel</b-button>
+                </b-col>
+            </b-row>
+
         </b-container>
 
-        <b-button class="mt-3" variant="primary" block size="lg" @click="login()">Sign In</b-button>
-        <b-button class="mt-2" variant="warning" block size="lg" @click="cancel()">Cancel</b-button>
-    </b-modal>
+        
 </template>
 
 <script>
