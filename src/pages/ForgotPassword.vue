@@ -29,11 +29,15 @@
     } from 'vuex';
 
     import store from '@/store/store';
+    import BaseTemplate from '@/layouts/BaseTemplate.vue'
 
     export default {
+        mixins: [BaseTemplate],
         beforeRouteEnter(to, from, next) {
-            if(store.getters.isAuthenticated) {
-                next({name: 'dashboard'});
+            if (store.getters.isAuthenticated) {
+                next({
+                    name: 'dashboard'
+                });
             } else {
                 next();
             }
@@ -44,13 +48,10 @@
                 email: ''
             }
         }),
-        computed: {
-            ...mapState(['user']),
-        },
         methods: {
             sendEmail: function () {
                 let that = this;
-                
+
                 if (!that.$data.form.email.trim()) {
                     that.$notify({
                         text: 'Please enter valid email.',
@@ -61,9 +62,16 @@
                     return;
                 }
 
-                // Send forgot password email.
-                HTTP.post('/users/api/sign-up/', that.$data.form).then(response => {
-                    
+                HTTP.post('/users/api/forgot-password/', that.$data.form).then(() => {
+                    that.$notify({
+                        text: 'Email sent. Check your email for reset code.',
+                        duration: 10000,
+                        type: 'success'
+                    });
+
+                    that.$router.push({
+                        name: 'home'
+                    });
                 }).catch(() => {
                     that.$notify({
                         text: 'Account with email not found.',

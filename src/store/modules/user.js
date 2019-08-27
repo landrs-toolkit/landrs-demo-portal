@@ -1,7 +1,6 @@
 import {
     HTTP
 } from '@/utilities/http-common';
-import { stat } from 'fs';
 
 export default {
     namespaced: true,

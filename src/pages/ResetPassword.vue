@@ -61,7 +61,7 @@
                 let that = this;
 
                 if (!that.$data.form.password.trim()) {
-                    that.$notify({
+                        that.$notify({
                         text: 'Please enter your current password.',
                         duration: 10000,
                         type: 'error'
@@ -70,9 +70,8 @@
                     return;
                 }
 
-                if (!that.$data.form.new_password.trim() && (that.$data.form.new_password.trim() !== that.$data.form
-                        .confirm_new_password.trim())) {
-                    that.$notify({
+                if (!that.$data.form.new_password.trim() && (that.$data.form.new_password.trim() !== that.$data.form.confirm_new_password.trim())) {
+                        that.$notify({
                         text: 'New passwords do not match.',
                         duration: 10000,
                         type: 'error'
@@ -81,16 +80,14 @@
                     return;
                 }
 
-                HTTP.post('/users/api/change-password/', that.$data.form).then(() => {
+                HTTP.post('/users/api/change-password/', that.$data.form).then(response => {
                     that.$notify({
                         text: 'Password changed.',
                         duration: 10000,
                         type: 'success'
                     });
 
-                    that.$router.push({
-                        name: 'user'
-                    });
+                    that.$router.push({name: 'user'});
                 }).catch(() => {
                     that.$notify({
                         text: 'Could not change password.',
