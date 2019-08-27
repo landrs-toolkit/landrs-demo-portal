@@ -7,14 +7,17 @@
 
             <b-navbar-nav class="ml-auto">
                 <b-nav-item :to="{name: 'dashboard'}">
+                    <i class="fas fa-th-large"></i>
                     Dashboard
                 </b-nav-item>
                 <b-nav-item>|</b-nav-item>
                 <b-nav-item :to="{name: 'user'}">
+                    <i class="fas fa-user"></i>
                     Profile
                 </b-nav-item>
                 <b-nav-item>|</b-nav-item>
                 <b-nav-item :to="{name: 'login', query: { next: '/dashboard'}}" v-if="!user.email">
+                    <i class="fas fa-key"></i>
                     Sign In
                 </b-nav-item>
             </b-navbar-nav>

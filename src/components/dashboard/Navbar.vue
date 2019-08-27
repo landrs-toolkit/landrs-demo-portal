@@ -5,14 +5,14 @@
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <b-link class="nav-link" :to="{name: 'home'}">
-                        <span data-feather="home"></span>
-                        Home <span class="sr-only">(current)</span>
+                        <i class="fas fa-home"></i>
+                        Home
                     </b-link>
                 </li>
                 <li class="nav-item">
                     <b-link class="nav-link" :to="{name: 'dashboard'}">
-                        <span data-feather="home"></span>
-                        Dashboard <span class="sr-only">(current)</span>
+                        <i class="fas fa-th-large"></i>
+                        Dashboard
                     </b-link>
                 </li>
             </ul>
@@ -20,13 +20,13 @@
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <b-link class="nav-link" :to="{name: 'user'}">
-                        <span data-feather="home"></span>
+                        <i class="fas fa-user"></i>
                         Profile
                     </b-link>
                 </li>
                 <li class="nav-item">
                     <b-link class="nav-link" @click="logout()">
-                        <span data-feather="home"></span>
+                        <i class="fas fa-times"></i>
                         Sign Out
                     </b-link>
                 </li>
