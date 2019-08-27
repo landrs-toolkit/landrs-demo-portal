@@ -9,7 +9,7 @@ export default {
     messageDialogMessage: 'An error occured!',
 
     loadingDialog: false,
-    loadingDialogMessage: ''
+    loadingDialogMessage: 'Loading'
 
   },
   getters: {

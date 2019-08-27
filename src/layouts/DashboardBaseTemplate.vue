@@ -1,28 +1,29 @@
 <template>
-    <!-- <v-content>
-        <v-container fluid fill-height>
-            <v-layout column>
-                <Navbar />
-
-                <router-view></router-view>
-
-                <Footer />
-            </v-layout>
-        </v-container>
-    </v-content> -->
-
 
     <div class="w-100 h-100 p-0 m-0 bg-warning">
-        <b-container class="h-100">
+        <!-- <b-container class="h-100">
             <b-row class="h-100">
-                <b-col sm="3" md="2" class="bg-danger">
-                    <Navbar />
+                <b-col sm="3" md="2" class="bg-danger" v-if="sidebar">
+                    <SideNavbar />
                 </b-col>
                 <b-col sm="9" md="10" class="bg-success">
+                    <TopNavbar />
                     <router-view></router-view>
                 </b-col>
             </b-row>
-        </b-container>
+        </b-container> -->
+
+        <div class="container h-100">
+            <div class="h-100 row no-gutters">
+                <div :class="{'col-sm-3': sidebar, 'col-md-2': sidebar, '': !sidebar}" class="bg-danger" v-if="sidebar">
+                    <SideNavbar />
+                </div>
+                <div :class="{'col-sm-9': sidebar, 'col-md-10': sidebar, 'col-12': !sidebar}" class="bg-success">
+                    <TopNavbar />
+                    <router-view></router-view>
+                </div>
+            </div>
+        </div>
 
         <Footer />
 
@@ -36,14 +37,15 @@
      * NOTE: See BaseTemplate.vue for further explanation.
      */
 
-    import Navbar from '@/components/dashboard/Navbar.vue'
+    import SideNavbar from '@/components/dashboard/SideNavbar.vue'
+    import TopNavbar from '@/components/dashboard/TopNavbar.vue'
     import Footer from '@/components/dashboard/Footer.vue'
 
     import BaseDialogMixin from '@/components/mixins/BaseDialogMixin.vue';
     import BaseAlertMixin from '@/components/mixins/BaseAlertMixin.vue';
 
     import {
-        mapActions
+        mapActions, mapState
     } from 'vuex';
 
     import store from '@/store/store';
@@ -51,7 +53,8 @@
     export default {
         mixins: [BaseDialogMixin, BaseAlertMixin],
         components: {
-            Navbar,
+            SideNavbar,
+            TopNavbar,
             Footer
         },
         beforeRouteEnter(to, from, next) {
@@ -64,6 +67,9 @@
         },
         created: function () {
             this.setBaseComponent('DashboardBaseTemplate')
+        },
+        computed: {
+            ...mapState(['sidebar'])
         },
         methods: {
             ...mapActions(['setBaseComponent'])

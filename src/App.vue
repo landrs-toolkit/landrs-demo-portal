@@ -3,10 +3,12 @@
     <notifications position="bottom left" />
 
     <LoginDialog />
+    <LoadingDialog />
     <!-- <div>
       
+      
+      
       <MessageDialog />
-      <LoadingDialog />
     </div> -->
 
     <component :is="getBaseComponent"></component>

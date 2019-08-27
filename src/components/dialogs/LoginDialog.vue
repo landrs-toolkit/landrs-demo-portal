@@ -1,36 +1,5 @@
 <template>
-    <!-- <v-layout justify-center>
-        <v-dialog v-model="loginDialog" persistent max-width="600px">
-            <template v-slot:activator="{ on }">
-            </template>
-
-            <v-alert :value="alert" type="error">
-                Could not log you in!
-            </v-alert>
-
-            <v-card class="elevation-12">
-                <v-toolbar dark color="primary">
-                    <v-toolbar-title>Login</v-toolbar-title>
-                </v-toolbar>
-                <v-card-text>
-                    <v-form>
-                        <v-text-field prepend-icon="person" v-model="payload.username" id="identity" name="identity"
-                            label="Identity" type="text"></v-text-field>
-                        <v-text-field prepend-icon="lock" v-model="payload.password" name="password" label="Password"
-                            id="password" type="password" @keypress.enter="login()"></v-text-field>
-                    </v-form>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="primary" @click="login()">Login</v-btn>
-                    <v-btn color="warning" @click="cancel()">Cancel</v-btn>
-                </v-card-actions>
-            </v-card>
-
-
-        </v-dialog>
-    </v-layout> -->
-
+    
     <b-modal title="Sign In" v-model="loginDialog" centered no-close-on-esc no-close-on-backdrop hide-header-close hide-footer>
         <b-container fluid>
 
@@ -105,9 +74,7 @@
                 HTTP.post('/users/api/token/', that.$data.payload).then(response => {
                     // Set token, updated HTTP with the Authorization token and set the base component to the 'Back' template.
                     that.setAuthorizationToken(response.data);
-                    HTTP.defaults.headers.common['Authorization'] = that.getAuthorizationHeader
-                        .Authorization;
-
+                    
                     that.$notify({
                         text: 'You have been logged in',
                         duration: 10000,

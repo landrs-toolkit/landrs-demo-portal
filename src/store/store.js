@@ -6,6 +6,8 @@ import sample from './modules/sample';
 import user from './modules/user';
 import dialog from './modules/dialog';
 
+import { HTTP } from '@/utilities/http-common';
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -18,13 +20,15 @@ export default new Vuex.Store({
   state: {
     component: 'BaseTemplate',
     Authorization: '',
-    loginDialog: false,
+    // loginDialog: false,
     
-    messageDialog: false,
-    messageDialogMessage: 'An error occured!',
+    // messageDialog: false,
+    // messageDialogMessage: 'An error occured!',
 
-    loadingDialog: false,
-    loadingDialogMessage: ''
+    // loadingDialog: false,
+    // loadingDialogMessage: ''
+
+    sidebar: true,
 
   },
   getters: {
@@ -56,15 +60,19 @@ export default new Vuex.Store({
     },
     setAuthorizationToken (state, payload) {
       state.Authorization = payload.token_type + ' ' + payload.access_token;
+      HTTP.defaults.headers.common['Authorization'] = state.Authorization;
       window.localStorage.setItem('Authorization', state.Authorization);
     },
     setAuthorization (state, payload) {
       state.Authorization = payload;
-      // state.Authorization = payload + '..';
     },
     clearAuthorizationToken (state) {
       state.Authorization = '';
       window.localStorage.removeItem('Authorization');
+      HTTP.defaults.headers.common['Authorization'] = undefined;
+    },
+    toggleSidebar: (state) => {
+      state.sidebar = !state.sidebar;
     }
   },
   actions: {
@@ -87,6 +95,9 @@ export default new Vuex.Store({
       } else {
         return false;
       }
+    },
+    toggleSidebar({commit}) {
+      commit('toggleSidebar');
     },
 
   }

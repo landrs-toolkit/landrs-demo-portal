@@ -1,56 +1,30 @@
 <template>
-  <v-layout justify-center>
-    
-    <!-- <div class="text-center"> -->
-        <!-- <v-btn
-        :disabled="dialog"
-        :loading="dialog"
-        class="white--text"
-        color="purple darken-2"
-        @click="dialog = true"
-        >
-        Start loading
-        </v-btn> -->
-        <v-dialog
-        v-model="loadingDialog"
-        hide-overlay
-        persistent
-        width="300"
-        >
-        <v-card
-            color="primary"
-            dark
-        >
-            <v-card-text>
-            {{loadingDialogMessage}}
-            <v-progress-linear
-                indeterminate
-                color="white"
-                class="mb-0"
-            ></v-progress-linear>
-            </v-card-text>
-        </v-card>
-        </v-dialog>
-    <!-- </div> -->
 
+  <b-modal v-model="loadingDialog" centered no-close-on-esc no-close-on-backdrop hide-header hide-header-close hide-footer>
+    <div class="text-center">
+      <div><b-spinner style="width: 3rem; height: 3rem;" class="mb-2" variant="primary" label="Text Centered"></b-spinner></div>
+      <div>{{loadingDialogMessage}}</div>
+    </div>
+  </b-modal>
 
-  </v-layout>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+  import {
+    mapState
+  } from 'vuex';
 
   export default {
-    data () {
+    data() {
       return {
         dialog: false,
       }
     },
     computed: {
-        ...mapState('dialog', ['loadingDialog', 'loadingDialogMessage'])
+      ...mapState('dialog', ['loadingDialog', 'loadingDialogMessage'])
     },
     methods: {
-        
+
     }
   }
 </script>
