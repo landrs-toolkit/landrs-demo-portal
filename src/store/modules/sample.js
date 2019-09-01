@@ -1,10 +1,12 @@
-import {
-    // HTTP
-} from '@/utilities/http-common';
+// import {
+//     HTTP
+// } from '@/utilities/http-common';
 
 export default {
     namespaced: true,
-    state: {},
+    state: {
+        sample: 'This is sample content.'
+    },
     getters: {},
     mutations: {},
     actions: {},

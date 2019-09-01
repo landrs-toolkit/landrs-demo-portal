@@ -11,18 +11,15 @@ import Dashboard from './pages/dashboard/Dashboard.vue';
 import UserProfile from './pages/user/UserProfile.vue';
 import ChangePassword from './pages/user/ChangePassword.vue'
 
+import Sample from './pages/sample/Sample.vue'
+
 import PageNotFound from './pages/PageNotFound.vue';
 
 import store from './store/store';
 
-import {
-  HTTP
-} from '@/utilities/http-common';
-
 Vue.use(Router)
 
 store.dispatch('initApp');
-HTTP.defaults.headers.common['Authorization'] = store.getters.getAuthorizationHeader.Authorization;
 
 store.dispatch('user/getUser').then(res => {
   store.dispatch('user/setUser', res.data);
@@ -34,8 +31,7 @@ const router = new Router({
   routes: [{
       path: '/',
       name: 'home',
-      component: Home,
-      meta: { component: 'BaseTemplate' },
+      component: Home
     },
     {
       path: '/about',
@@ -43,31 +39,34 @@ const router = new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import( /* webpackChunkName: "about" */ './pages/About.vue'),
-      meta: { component: 'BaseTemplate' },
+      component: () => import( /* webpackChunkName: "about" */ './pages/About.vue')
     },
     {
       path: '/login/',
       name: 'login',
-      component: Login,
-      meta: { component: 'BaseTemplate' },
+      component: Login
     },
     {
       path: '/register/',
       name: 'register',
-      component: Register,
-      meta: { component: 'BaseTemplate' },
+      component: Register
     },
     {
       path: '/forgot-password/',
       name: 'forgot-password',
-      component: ForgotPassword,
-      meta: { component: 'BaseTemplate' },
+      component: ForgotPassword
+    },
+    {
+      path: '/sample/',
+      name: 'sample',
+      component: Sample
     },
     {
       path: '/dashboard/',
       component: DashboardRoot,
-      meta: { requiresAuth: true, component: 'DashboardBaseTemplate' },
+      meta: {
+        requiresAuth: true
+      },
       children: [{
           path: '',
           name: 'dashboard',
@@ -88,16 +87,14 @@ const router = new Router({
     {
       path: '*',
       name: 'not-found',
-      component: PageNotFound,
-      meta: { component: '*' }
-    },
-
+      component: PageNotFound
+    }
   ]
 });
 
 router.beforeEach((to, from, next) => {
-  if(to.matched.some(record => record.meta.requiresAuth)) {
-    if(store.getters.isAuthenticated) {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (store.getters.isAuthenticated) {
       next();
     } else {
       next({
@@ -107,7 +104,6 @@ router.beforeEach((to, from, next) => {
         }
       });
     }
-    
   } else {
     next();
   }

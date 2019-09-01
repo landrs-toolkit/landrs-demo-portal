@@ -65,6 +65,7 @@ export default new Vuex.Store({
     },
     setAuthorization (state, payload) {
       state.Authorization = payload;
+      HTTP.defaults.headers.common['Authorization'] = state.Authorization;
     },
     clearAuthorizationToken (state) {
       state.Authorization = '';
