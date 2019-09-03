@@ -4,6 +4,7 @@
             {{title}}
         </h1>
         <p>{{sample}}</p>
+        <p>{{prop}}</p>
     </div>
 </template>
 
@@ -26,6 +27,13 @@
         ],
         components: {
 
+        },
+        props: {
+            prop: {
+              type: String,
+              required: false,
+              default: "Sample prop"
+            }
         },
         data: function () {
             return {
