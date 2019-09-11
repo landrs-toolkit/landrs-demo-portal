@@ -139,7 +139,31 @@ https://github.com/euvl/vue-notification/
 
 **NOTE: Type can be 'success' (green), 'warn' (yellow), 'error' (red), or just left blank (blue)***
 
-### File structure
+## Extra CSS
+
+BVCC is Bootstrap + VueJS. By design (bootstrap-vue), all elements and css available in Bootstrap CSS are also available to you in BVCC. All the CSS packages listed below are available to you out of the box in BVCC.
+
+### Bootstrap
+
+Currently using v4.x
+
+https://getbootstrap.com/
+
+### Fontawesome
+
+If you want to use fancy icons, use fontawesome. 
+
+https://fontawesome.com/icons?d=gallery&m=free
+
+### Tailwind
+
+For fine grained css work, use utility library tailwind CSS. 
+
+https://tailwindcss.com/
+
+**NOTE: Because of conflicts, tailwind has been namespaced. Use 'tw-' for any tailwind classes you want to use in BVCC.**
+
+## File structure
 
 * src
   * assets: Images that ship with the package. For example, your logo.
