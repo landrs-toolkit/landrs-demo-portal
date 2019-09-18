@@ -1,0 +1,18 @@
+// $pink: #ed64a6;
+// $warning: $pink;
+
+// $body-bg: #bbb;
+// $body-color: #111;
+
+// $enable-shadows: true;
+// $enable-gradients: true;
+
+// Include Bootstrap and BootstrapVue SCSS files
+@import '~bootstrap/scss/bootstrap.scss';
+@import '~bootstrap-vue/src/index.scss';
+
+// General style overrides and custom classes
+// body {
+//   margin: 0;
+// }
+// ...

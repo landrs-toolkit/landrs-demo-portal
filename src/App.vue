@@ -64,6 +64,6 @@
 </script>
 
 
-<style>
-
+<style lang="scss">
+@import 'assets/css/custom.scss';
 </style>

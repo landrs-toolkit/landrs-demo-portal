@@ -42,7 +42,8 @@ nodeenv --list
 # Create your node virtual environment.
 nodeenv --node=8.16.0 env-project-name
 
-# Activate your environment
+# Activate your environment.
+# NOTE: Use this command when you return to work on your project.
 source env-project-name/bin/activate
 ```
 
@@ -162,6 +163,16 @@ For fine grained css work, use utility library tailwind CSS.
 https://tailwindcss.com/
 
 **NOTE: Because of conflicts, tailwind has been namespaced. Use 'tw-' for any tailwind classes you want to use in BVCC.**
+
+### Theming
+
+**BootstrapVue Reference:** https://bootstrap-vue.js.org/docs/reference/theming/#default-theme-colors
+
+**Bootstrap Reference:** https://getbootstrap.com/docs/4.3/getting-started/theming/
+
+Use these reference to find which variables to modify. Once you know which variables to use, got to *assets/css/custom.scss* to add your variables. NOTE: Your variables must be above the *@import* lines in the file. See the commented out examples.
+
+
 
 ## File structure
 
