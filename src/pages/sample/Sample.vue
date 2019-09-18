@@ -5,6 +5,12 @@
         </h1>
         <p>{{sample}}</p>
         <p>{{prop}}</p>
+
+        <div class="text-left">
+            <SampleComponent title="Sample Component called with method 1." />
+            <hr>
+            <sample-component title="Sample Component called with method 2."></sample-component>
+        </div>
     </div>
 </template>
 
@@ -16,9 +22,13 @@
 
     import BaseTemplate from '@/layouts/BaseTemplate.vue'
     import {
-        mapState
+        mapState,
+        // mapGetters,
+        // mapActions
     } from 'vuex';
     // import DashboardBaseTemplate from '@/layouts/DashboardBaseTemplate.vue'
+
+    import SampleComponent from '@/components/SampleComponent.vue';
 
     export default {
         mixins: [
@@ -26,7 +36,7 @@
             // DashboardBaseTemplate
         ],
         components: {
-
+            SampleComponent
         },
         props: {
             prop: {
@@ -41,7 +51,8 @@
             }
         },
         computed: {
-            ...mapState('sample', ['sample'])
+            ...mapState('sample', ['sample']),
+            // ...mapGetters('sample', ['nameOfGetter'])
         },
         created: function () {
 
@@ -50,6 +61,7 @@
 
         },
         methods: {
+            // ...mapActions('sample', ['nameOfAction']),
             get: function () {
                 // HTTP.get('/').then((response) => {
                 //     let something = response.data;
@@ -60,7 +72,13 @@
             find: function () {
 
             },
+            create: function () {
+
+            },
             patch: function () {
+
+            },
+            update: function () {
 
             },
             delete: function () {

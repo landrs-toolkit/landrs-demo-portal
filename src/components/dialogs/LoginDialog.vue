@@ -3,10 +3,13 @@
     <b-modal title="Sign In" v-model="loginDialog" centered no-close-on-esc no-close-on-backdrop hide-header-close hide-footer>
         <b-container fluid>
 
-            <b-row class="my-1">
+            <b-row class="my-3">
                 <b-col sm="12">
                     <b-form-input size="lg" v-model="payload.username" placeholder="Identity"></b-form-input>
                 </b-col>
+            </b-row>
+
+            <b-row class="my-3">
                 <b-col sm="12">
                     <b-form-input type="password" size="lg" v-model="payload.password" placeholder="Password" @keypress.enter="login()"></b-form-input>
                 </b-col>
