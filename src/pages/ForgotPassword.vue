@@ -1,7 +1,7 @@
 <template>
     <b-container fluid class="h-100">
         <div class="h-25"></div>
-        <b-row>
+        <b-row class="my-3">
             <b-col sm="12" md="6" offset-md="3">
                 <b-form-input type="email" size="lg" v-model="form.email" placeholder="Email"></b-form-input>
             </b-col>
