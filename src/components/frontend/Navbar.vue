@@ -1,19 +1,18 @@
 <template>
-  <div class>
     <b-navbar toggleable="md" type="dark" variant="dark">
-      <div class="container">
+      <b-container>
         <b-navbar-brand href="#">CRC BVCC</b-navbar-brand>
 
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
-            <b-nav-item :to="{name: 'dashboard'}">Dashboard</b-nav-item>
-            <b-nav-item :to="{name: 'dashboard'}">About</b-nav-item>
           </b-navbar-nav>
 
           <b-navbar-nav class="ml-auto">
-            <b-nav-item-dropdown right no-caret="true"><template slot="button-content"><i class="fas fa-user-circle"></i></template>
+            <b-nav-item>About</b-nav-item>
+            <b-nav-item :to="{name: 'dashboard'}">Dashboard</b-nav-item>
+            <b-nav-item-dropdown right no-caret="true"><template slot="button-content"><i class="fas fa-user-circle tw-text-2xl"></i></template>
               <b-dropdown-item
                 :to="{name: 'login', query: { next: '/dashboard'}}"
                 v-if="!user.email"
@@ -24,9 +23,8 @@
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
-      </div>
+      </b-container>
     </b-navbar>
-  </div>
 </template>
 
 <script>
