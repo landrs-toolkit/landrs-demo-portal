@@ -6,17 +6,20 @@ workspace:
   path: src/github.com/crcresearch/bvcc
 
 steps:
-  - name: publish  
+  - name: publish_develop
     image: plugins/docker
+    when:
+      branch:
+        - develop
     environment:
       VUE_APP_AXIOS_BASE_URL:
-        from_secret: VUE_APP_AXIOS_BASE_URL
+        from_secret: VUE_APP_QA_AXIOS_BASE_URL
       VUE_APP_GRANT_TYPE:
-        from_secret: VUE_APP_GRANT_TYPE
+        from_secret: VUE_APP_QA_GRANT_TYPE
       VUE_APP_CLIENT_ID:
-        from_secret: VUE_APP_CLIENT_ID
+        from_secret: VUE_APP_QA_CLIENT_ID
       VUE_APP_CLIENT_SECRET:
-        from_secret: VUE_APP_CLIENT_SECRET
+        from_secret: VUE_APP_QA_CLIENT_SECRET
     settings:
       build_args_from_env:
         - VUE_APP_AXIOS_BASE_URL
@@ -29,6 +32,58 @@ steps:
         from_secret: DOCKER_REGISTRY_PASSWORD
       repo: zazu.crc.nd.edu/cookiecutters/bvcc
       registry: zazu.crc.nd.edu
-      tags:
-       - latest
-       - '1.0'
+      tags: 'development'
+  - name: publish_master
+    image: plugins/docker
+    when:
+      branch:
+        - master
+    environment:
+      VUE_APP_AXIOS_BASE_URL:
+        from_secret: VUE_APP_PROD_AXIOS_BASE_URL
+      VUE_APP_GRANT_TYPE:
+        from_secret: VUE_APP_PROD_GRANT_TYPE
+      VUE_APP_CLIENT_ID:
+        from_secret: VUE_APP_PROD_CLIENT_ID
+      VUE_APP_CLIENT_SECRET:
+        from_secret: VUE_APP_PROD_CLIENT_SECRET
+    settings:
+      build_args_from_env:
+        - VUE_APP_AXIOS_BASE_URL
+        - VUE_APP_GRANT_TYPE
+        - VUE_APP_CLIENT_ID
+        - VUE_APP_CLIENT_SECRET
+      username:
+        from_secret: DOCKER_REGISTRY_USERNAME
+      password:
+        from_secret: DOCKER_REGISTRY_PASSWORD
+      repo: zazu.crc.nd.edu/cookiecutters/bvcc
+      registry: zazu.crc.nd.edu
+      tags: 'latest'
+  - name: publish_tag
+    image: plugins/docker
+    when:
+      event:
+        - tag
+    environment:
+      VUE_APP_AXIOS_BASE_URL:
+        from_secret: VUE_APP_PROD_AXIOS_BASE_URL
+      VUE_APP_GRANT_TYPE:
+        from_secret: VUE_APP_PROD_GRANT_TYPE
+      VUE_APP_CLIENT_ID:
+        from_secret: VUE_APP_PROD_CLIENT_ID
+      VUE_APP_CLIENT_SECRET:
+        from_secret: VUE_APP_PROD_CLIENT_SECRET
+    settings:
+      build_args_from_env:
+        - VUE_APP_AXIOS_BASE_URL
+        - VUE_APP_GRANT_TYPE
+        - VUE_APP_CLIENT_ID
+        - VUE_APP_CLIENT_SECRET
+      username:
+        from_secret: DOCKER_REGISTRY_USERNAME
+      password:
+        from_secret: DOCKER_REGISTRY_PASSWORD
+      repo: zazu.crc.nd.edu/cookiecutters/bvcc
+      registry: zazu.crc.nd.edu
+      auto_tag: true
