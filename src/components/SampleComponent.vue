@@ -1,10 +1,7 @@
 <template>
-    <div class="w-100 h-100 text-center">
-        <h1 class="display-2">
-            {{title}}
-        </h1>
-        <p>{{sample}}</p>
-        <p>{{prop}}</p>
+    <div class="tw-bg-orange-100 tw-border-l-4 tw-border-orange-200 tw-text-orange-dark tw-p-4" role="alert">
+        <p class="tw-font-bold">{{title}}</p>
+        <p>{{text}}</p>
     </div>
 </template>
 
@@ -14,34 +11,31 @@
     // } from '@/utilities/http-common';
     // import HandleErrors from '@/utilities/handle-errors';
 
-    import BaseTemplate from '@/layouts/BaseTemplate.vue'
-    import {
-        mapState
-    } from 'vuex';
-    // import DashboardBaseTemplate from '@/layouts/DashboardBaseTemplate.vue'
-
+    // import {
+    //     mapState, mapGetters, mapActions
+    // } from 'vuex';
+    
     export default {
         mixins: [
-            BaseTemplate,
-            // DashboardBaseTemplate
+
         ],
         components: {
 
         },
         props: {
-            prop: {
-              type: String,
-              required: false,
-              default: "Sample prop"
+            title: {
+                type: String,
+                required: false,
+                default: "Sample Component"
             }
         },
         data: function () {
             return {
-                title: 'Sample Page'
+                text: 'This is an example of a component.'
             }
         },
         computed: {
-            ...mapState('sample', ['sample'])
+            // ...mapState('sample', ['sample'])
         },
         created: function () {
 
@@ -60,30 +54,18 @@
             find: function () {
 
             },
+            create: function () {
+
+            },
             patch: function () {
+
+            },
+            update: function () {
 
             },
             delete: function () {
 
             }
         }
-        // beforeRouteEnter(to, from, next) {
-        //     // called before the route that renders this component is confirmed.
-        //     // does NOT have access to `this` component instance,
-        //     // because it has not been created yet when this guard is called!
-        // },
-        // beforeRouteUpdate(to, from, next) {
-        //     // called when the route that renders this component has changed,
-        //     // but this component is reused in the new route.
-        //     // For example, for a route with dynamic params `/foo/:id`, when we
-        //     // navigate between `/foo/1` and `/foo/2`, the same `Foo` component instance
-        //     // will be reused, and this hook will be called when that happens.
-        //     // has access to `this` component instance.
-        // },
-        // beforeRouteLeave(to, from, next) {
-        //     // called when the route that renders this component is about to
-        //     // be navigated away from.
-        //     // has access to `this` component instance.
-        // },
     }
 </script>

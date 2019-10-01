@@ -1,13 +1,13 @@
 <template>
     <b-container fluid class="h-100">
         <div class="h-25"></div>
-        <b-row>
+        <b-row class="my-3">
             <b-col sm="12" md="6" offset-md="3">
                 <b-form-input size="lg" v-model="form.name" placeholder="Name"></b-form-input>
             </b-col>
         </b-row>
 
-        <b-row>
+        <b-row class="my-3">
             <b-col sm="6" md="3" offset-md="3">
                 <b-form-input size="lg" v-model="form.email" placeholder="Email"></b-form-input>
             </b-col>
@@ -16,7 +16,7 @@
             </b-col>
         </b-row>
 
-        <b-row>
+        <b-row class="my-3">
             <b-col sm="6" md="3" offset-md="3">
                 <b-form-input type="password" size="lg" v-model="form.password" placeholder="Password"></b-form-input>
             </b-col>
@@ -26,7 +26,7 @@
             </b-col>
         </b-row>
 
-        <b-row>
+        <b-row class="my-3">
             <b-col sm="6" md="3" offset-md="3">
                 <b-button class="mt-2" variant="primary" block size="lg" @click="register()">Sign Up</b-button>
             </b-col>
