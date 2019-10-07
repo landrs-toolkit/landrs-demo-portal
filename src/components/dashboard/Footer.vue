@@ -1,11 +1,15 @@
 <template>
     
-    <footer class="footer fixed-bottom mt-auto py-3 border-top border-top-light bg-white">
-        <div class="w-75 mx-auto text-center">
-            <span class="text-muted">
-                <div>&copy; {{ new Date().getFullYear() }} — <strong>#techsense</strong></div>
-            </span>
-        </div>
+    <footer class="footer mt-auto py-3 border-top border-top-light bg-white">
+      <b-container class="text-center tw-text-gray-600 py-2">
+        <span>
+          &copy;
+          {{ new Date().getFullYear() }} —
+          #techsense
+        </span>
+        <b-link class="mx-3" :href="'https://github.com/crcresearch/bvcc'" target="_blank">GitHub</b-link>
+        <b-link class="mx-3" :href="'https://crc.nd.edu'" target="_blank">CRC</b-link>
+      </b-container>
     </footer>
 
 </template>

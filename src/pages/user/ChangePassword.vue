@@ -2,20 +2,20 @@
     <b-container fluid class="h-100">
         <div class="h-25"></div>
 
-        <b-row>
+        <b-row class="tw-py-1">
             <b-col sm="12" md="6" offset-md="3">
                 <b-form-input type="password" size="lg" v-model="form.password" placeholder="Password"></b-form-input>
             </b-col>
         </b-row>
 
-        <b-row>
+        <b-row class="tw-py-1">
             <b-col sm="12" md="6" offset-md="3">
                 <b-form-input type="password" size="lg" v-model="form.new_password" placeholder="New Password">
                 </b-form-input>
             </b-col>
         </b-row>
 
-        <b-row>
+        <b-row class="tw-py-1">
             <b-col sm="12" md="6" offset-md="3">
                 <b-form-input type="password" size="lg" v-model="form.confirm_new_password"
                     placeholder="Confirm Password"></b-form-input>
@@ -24,10 +24,10 @@
 
         <b-row>
             <b-col sm="6" md="3" offset-md="3">
-                <b-button class="mt-2" variant="primary" block size="lg" @click="changePassword()">Change</b-button>
+                <b-button class="mt-3" variant="primary" block size="lg" @click="changePassword()">Change</b-button>
             </b-col>
             <b-col sm="6" md="3">
-                <b-button class="mt-2" variant="warning" block size="lg" @click="cancel()">Cancel</b-button>
+                <b-button class="mt-3" variant="outline-primary" block size="lg" @click="cancel()">Cancel</b-button>
             </b-col>
         </b-row>
 
