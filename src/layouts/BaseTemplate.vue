@@ -1,7 +1,7 @@
 <template>
     <div class="w-100 h-100 p-0 m-0 mx-auto">
         <Navbar />
-        <router-view></router-view>
+        <router-view style="margin-top:60px"></router-view>
         <Footer />
     </div>
 </template>

@@ -4,29 +4,26 @@
         <div class="sidebar-sticky">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <b-link class="nav-link" :to="{name: 'home'}">
-                        <i class="fas fa-home"></i>
-                        Home
+                    <b-link class="nav-link" :to="{name: 'dashboard'}">
+                        <b-img src="../../assets/crc-logo-full.png" fluid alt="logo"></b-img>
                     </b-link>
                 </li>
                 <li class="nav-item">
-                    <b-link class="nav-link" :to="{name: 'dashboard'}">
-                        <i class="fas fa-th-large"></i>
-                        Dashboard
+                    <b-link class="nav-link tw-text-sm return" :to="{name: 'home'}">
+                        <i class="fas fa-chevron-left tw-pr-1"></i>
+                        Return to site
                     </b-link>
                 </li>
             </ul>
             <hr>
-            <ul class="nav flex-column">
+           <ul class="nav flex-column">
                 <li class="nav-item">
                     <b-link class="nav-link" :to="{name: 'user'}">
-                        <i class="fas fa-user"></i>
                         Profile
                     </b-link>
                 </li>
                 <li class="nav-item">
                     <b-link class="nav-link" :to="{name: 'change-password'}">
-                        <i class="fas fa-key"></i>
                         Change Password
                     </b-link>
                 </li>
@@ -35,7 +32,6 @@
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <b-link class="nav-link" @click="logout()">
-                        <i class="fas fa-times"></i>
                         Sign Out
                     </b-link>
                 </li>
@@ -94,12 +90,17 @@
 
 <style>
     .sidebar {
-        background-color: whitesmoke;
+        background-color: ; /* whitesmoke; */
         box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
         padding-top: 15px;
     }
     .sidebar .nav-link {
         font-weight: 500;
+        color: #333;
+    }
+
+    .sidebar .nav-link.return {
+        font-weight: 400;
         color: #666;
     }
 
