@@ -1,19 +1,21 @@
 <template>
-  <div class="m-0 t-0 border-bottom border-bottom-light">
-    <b-navbar type="light" variant="light" class="bg-white">
+  <div class="m-0 t-0 border-bottom border-bottom-dark">
+    <b-navbar type="dark" variant="dark">
       <b-navbar-nav>
         <b-nav-item @click="toggleSidebar()">
-          <i class="fas fa-2x" :class="{'fa-bars': !sidebar, 'fa-bars': sidebar, }"></i>
+          <i class="fas tw-text-2xl" :class="{'fa-bars': !sidebar, 'fa-angle-double-left': sidebar, }"></i>
         </b-nav-item>
       </b-navbar-nav>
-      <b-navbar-nav class="ml-auto">
-        <b-nav-text class="tw-text-4xl tw-leading-none">Dashboard</b-nav-text>
-      </b-navbar-nav>
+      <b-navbar-brand :to="{name: 'home'}" href="#" class="tw-ml-3">CRC BVCC</b-navbar-brand>
+        <b-navbar-nav>
+          <b-nav-item>About</b-nav-item>
+          <b-nav-item :to="{name: 'dashboard'}" active="true">Data Portal</b-nav-item>
+        </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto">
         <b-nav-item-dropdown right no-caret="true">
           <template slot="button-content">
-            <i class="fas fa-2x fa-user-circle"></i>
+            <i class="fas fa-user-circle tw-text-2xl"></i>
           </template>
           <b-dropdown-item :to="{name: 'user'}">Profile</b-dropdown-item>
           <b-dropdown-item @click="logout()">Sign Out</b-dropdown-item>

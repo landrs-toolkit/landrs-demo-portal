@@ -8,12 +8,6 @@
                         <b-img src="../../assets/crc-logo-full.png" fluid alt="logo"></b-img>
                     </b-link>
                 </li>
-                <li class="nav-item">
-                    <b-link class="nav-link tw-text-sm return" :to="{name: 'home'}">
-                        <i class="fas fa-chevron-left tw-pr-1"></i>
-                        Return to site
-                    </b-link>
-                </li>
             </ul>
             <hr>
            <ul class="nav flex-column">
