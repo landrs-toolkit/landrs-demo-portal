@@ -10,14 +10,14 @@
 
         <b-row>
             <b-col sm="12" md="6" offset-md="3">
-                <b-form-input type="password" size="lg" v-model="form.new_password" placeholder="New Password">
+                <b-form-input type="password" size="lg" v-model="form.new_password1" placeholder="New Password">
                 </b-form-input>
             </b-col>
         </b-row>
 
         <b-row>
             <b-col sm="12" md="6" offset-md="3">
-                <b-form-input type="password" size="lg" v-model="form.confirm_new_password"
+                <b-form-input type="password" size="lg" v-model="form.new_password2"
                     placeholder="Confirm Password"></b-form-input>
             </b-col>
         </b-row>
@@ -52,8 +52,10 @@
         data: () => ({
             form: {
                 // password: '',
-                new_password: '',
-                confirm_new_password: ''
+                new_password1: '',
+                new_password2: '',
+                uid: '',
+                token: ''
             }
         }),
         methods: {
@@ -70,7 +72,7 @@
                 //     return;
                 // }
 
-                if (!that.$data.form.new_password.trim() && (that.$data.form.new_password.trim() !== that.$data.form.confirm_new_password.trim())) {
+                if (!that.$data.form.new_password1.trim() && (that.$data.form.new_password1.trim() !== that.$data.form.new_password2.trim())) {
                         that.$notify({
                         text: 'New passwords do not match.',
                         duration: 10000,
@@ -80,9 +82,12 @@
                     return;
                 }
 
-                HTTP.post('/users/api/change-password/', that.$data.form).then(response => {
+                that.$data.form.uid = that.$route.query.uidb64
+                that.$data.form.token = that.$route.query.token
+
+                HTTP.post('/users/api/reset-password/', that.$data.form).then(response => {
                     that.$notify({
-                        text: 'Password changed.',
+                        text: 'Password reset.',
                         duration: 10000,
                         type: 'success'
                     });
@@ -90,7 +95,7 @@
                     that.$router.push({name: 'user'});
                 }).catch(() => {
                     that.$notify({
-                        text: 'Could not change password.',
+                        text: 'Could not reset password.',
                         duration: 10000,
                         type: 'error'
                     });
@@ -101,6 +106,6 @@
                     name: 'user'
                 });
             }
-        }
+        },
     }
 </script>
