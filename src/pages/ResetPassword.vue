@@ -2,11 +2,11 @@
     <b-container fluid class="h-100">
         <div class="h-25"></div>
 
-        <b-row>
+        <!-- <b-row>
             <b-col sm="12" md="6" offset-md="3">
                 <b-form-input type="password" size="lg" v-model="form.password" placeholder="Password"></b-form-input>
             </b-col>
-        </b-row>
+        </b-row> -->
 
         <b-row>
             <b-col sm="12" md="6" offset-md="3">
@@ -51,7 +51,7 @@
         mixins: [DashboardBaseTemplate],
         data: () => ({
             form: {
-                password: '',
+                // password: '',
                 new_password: '',
                 confirm_new_password: ''
             }
@@ -60,15 +60,15 @@
             changePassword: function () {
                 let that = this;
 
-                if (!that.$data.form.password.trim()) {
-                        that.$notify({
-                        text: 'Please enter your current password.',
-                        duration: 10000,
-                        type: 'error'
-                    });
+                // if (!that.$data.form.password.trim()) {
+                //         that.$notify({
+                //         text: 'Please enter your current password.',
+                //         duration: 10000,
+                //         type: 'error'
+                //     });
 
-                    return;
-                }
+                //     return;
+                // }
 
                 if (!that.$data.form.new_password.trim() && (that.$data.form.new_password.trim() !== that.$data.form.confirm_new_password.trim())) {
                         that.$notify({

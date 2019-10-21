@@ -10,6 +10,7 @@ import DashboardRoot from './pages/dashboard/DashboardRoot.vue';
 import Dashboard from './pages/dashboard/Dashboard.vue';
 import UserProfile from './pages/user/UserProfile.vue';
 import ChangePassword from './pages/user/ChangePassword.vue'
+import ResetPassword from '@/pages/ResetPassword.vue'
 
 import Sample from './pages/sample/Sample.vue'
 
@@ -55,6 +56,11 @@ const router = new Router({
       path: '/forgot-password/',
       name: 'forgot-password',
       component: ForgotPassword
+    },
+    {
+      path: '/reset-password/',
+      name: 'reset-password',
+      component: ResetPassword
     },
     {
       path: '/sample/',
