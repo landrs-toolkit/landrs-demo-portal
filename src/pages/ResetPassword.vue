@@ -8,21 +8,21 @@
             </b-col>
         </b-row> -->
 
-        <b-row>
+        <b-row class="my-3">
             <b-col sm="12" md="6" offset-md="3">
                 <b-form-input type="password" size="lg" v-model="form.new_password1" placeholder="New Password">
                 </b-form-input>
             </b-col>
         </b-row>
 
-        <b-row>
+        <b-row class="my-3">
             <b-col sm="12" md="6" offset-md="3">
                 <b-form-input type="password" size="lg" v-model="form.new_password2"
                     placeholder="Confirm Password"></b-form-input>
             </b-col>
         </b-row>
 
-        <b-row>
+        <b-row class="my-3">
             <b-col sm="6" md="3" offset-md="3">
                 <b-button class="mt-2" variant="primary" block size="lg" @click="changePassword()">Change</b-button>
             </b-col>
@@ -93,11 +93,15 @@
                     });
 
                     that.$router.push({name: 'user'});
-                }).catch(() => {
-                    that.$notify({
-                        text: 'Could not reset password.',
-                        duration: 10000,
-                        type: 'error'
+                }).catch((error) => {
+                    let message = ('new_password2' in error.response.data) ? error.response.data.new_password2 : ["Could not reset your password."];
+                    let message_token = ('token' in error.response.data) ? message = message.concat("Token is not valid.") : null;
+                    message.forEach(function(item){
+                        that.$notify({
+                            text: item,
+                            duration: 10000,
+                            type: 'error',
+                        });
                     });
                 });
             },
