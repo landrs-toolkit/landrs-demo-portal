@@ -94,15 +94,27 @@
 
                     that.$router.push({name: 'user'});
                 }).catch((error) => {
-                    let message = ('new_password2' in error.response.data) ? error.response.data.new_password2 : ["Could not reset your password."];
-                    let message_token = ('token' in error.response.data) ? message = message.concat("Token is not valid.") : null;
-                    message.forEach(function(item){
+                    if('token' in error.response.data){
                         that.$notify({
-                            text: item,
+                            text: 'Token is not valid.',
                             duration: 10000,
                             type: 'error',
                         });
-                    });
+                    } else if('new_password2' in error.response.data){
+                        error.response.data.new_password2.forEach(function(item){
+                            that.$notify({
+                                text: item,
+                                duration: 10000,
+                                type: 'error',
+                            });
+                        });
+                    } else {
+                        that.$notify({
+                            text: 'Unknown error occurred.',
+                            duration: 10000,
+                            type: 'error',
+                        });
+                    }
                 });
             },
             cancel: function () {
