@@ -2,27 +2,27 @@
     <b-container fluid class="h-100">
         <div class="h-25"></div>
 
-        <b-row>
+        <b-row class="my-3">
             <b-col sm="12" md="6" offset-md="3">
                 <b-form-input type="password" size="lg" v-model="form.password" placeholder="Password"></b-form-input>
             </b-col>
         </b-row>
 
-        <b-row>
+        <b-row class="my-3">
             <b-col sm="12" md="6" offset-md="3">
                 <b-form-input type="password" size="lg" v-model="form.new_password" placeholder="New Password">
                 </b-form-input>
             </b-col>
         </b-row>
 
-        <b-row>
+        <b-row class="my-3">
             <b-col sm="12" md="6" offset-md="3">
                 <b-form-input type="password" size="lg" v-model="form.confirm_new_password"
                     placeholder="Confirm Password"></b-form-input>
             </b-col>
         </b-row>
 
-        <b-row>
+        <b-row class="my-3">
             <b-col sm="6" md="3" offset-md="3">
                 <b-button class="mt-2" variant="primary" block size="lg" @click="changePassword()">Change</b-button>
             </b-col>
@@ -64,8 +64,7 @@
                     return;
                 }
 
-                if (!that.$data.form.new_password.trim() && (that.$data.form.new_password.trim() !== that.$data.form
-                        .confirm_new_password.trim())) {
+                if (!that.$data.form.new_password.trim() && (that.$data.form.new_password.trim() !== that.$data.form.confirm_new_password.trim())) {
                     that.$notify({
                         text: 'New passwords do not match.',
                         duration: 10000,
