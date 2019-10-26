@@ -1,7 +1,6 @@
 <template>
     <div class="w-75 h-100 p-0 m-0 mx-auto">
         <router-view></router-view>
-        <Footer />
     </div>
 </template>
 

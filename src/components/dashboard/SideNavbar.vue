@@ -11,6 +11,12 @@
             </ul>
             <hr>
            <ul class="nav flex-column">
+               <li class="nav-item">
+                    <b-dropdown-header class="sidebar-heading pl-3">
+                        <i class="fas fa-user"></i>
+                        Account
+                    </b-dropdown-header>
+                </li>
                 <li class="nav-item">
                     <b-link class="nav-link" :to="{name: 'user'}">
                         Profile
@@ -22,14 +28,14 @@
                     </b-link>
                 </li>
             </ul>
-            <hr>
+            <!-- <hr>
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <b-link class="nav-link" @click="logout()">
                         Sign Out
                     </b-link>
                 </li>
-            </ul>
+            </ul> -->
         </div>
     </div>
 
@@ -84,18 +90,16 @@
 
 <style>
     .sidebar {
-        background-color: ; /* whitesmoke; */
+        background-color: white;
         box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
         padding-top: 15px;
     }
     .sidebar .nav-link {
-        font-weight: 500;
-        color: #333;
-    }
-
-    .sidebar .nav-link.return {
+        font-size: .9rem;
         font-weight: 400;
         color: #666;
+        line-height: 1.3;
+        outline: 0;
     }
 
     .sidebar .nav-link .feather {
@@ -103,8 +107,10 @@
         color: #999;
     }
 
-    .sidebar .nav-link.active {
-        color: #007bff;
+    .sidebar .nav-link.router-link-active {
+        color: #333;/* #007bff; */
+        font-weight: 500;
+        background:rgba(0, 0, 0, .075);
     }
 
     .sidebar .nav-link:hover .feather,
@@ -113,7 +119,9 @@
     }
 
     .sidebar-heading {
-        font-size: .75rem;
+        font-size: .9rem;
         text-transform: uppercase;
+        color: #333;
+        font-weight: 600;
     }
 </style>

@@ -1,9 +1,8 @@
 <template>
 
     <div class="w-100 h-100">
-        <div class="w-100 h-25"></div>
         <div class="w-100">
-            <b-card
+            <!-- <b-card
                 img-src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
                 img-alt="" img-top tag="article" style="max-width: 20rem;" class="mb-2 mx-auto">
                 <b-card-title>
@@ -17,7 +16,33 @@
                         <strong>Username: </strong> {{user.username}}
                     </b-list-group-item>
                 </b-list-group>
+            </b-card> -->
+
+            <b-card
+                img-src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
+                img-alt="" img-top tag="article" style="max-width: 20rem;" class="mb-2">
+                <b-card-title>
+                    {{user.name || user.email}}
+                </b-card-title>
+                <b-list-group flush>
+                    <b-list-group-item d-flex justify-content-between>
+                        <strong>Email: </strong> {{user.email}} 
+                    </b-list-group-item>
+                    <b-list-group-item>
+                        <strong>Username: </strong> {{user.username}}
+                    </b-list-group-item>
+                    <b-list-group-item>
+                        <strong>Password: </strong> <b-button  :to="{name: 'change-password'}" pill variant="outline-secondary ml-2">Change</b-button>
+                    </b-list-group-item>
+                    <!-- <b-list-group-item>
+                        <strong>Admin: </strong> {{user.is_staff ? 'Yes' : 'No'}}
+                    </b-list-group-item>
+                    <b-list-group-item>
+                        <strong>Groups: </strong> {{myGroups.join(", ")}}
+                    </b-list-group-item> -->
+                </b-list-group>
             </b-card>
+
         </div>
     </div>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="m-0 t-0 border-bottom border-bottom-dark">
+  <!-- <div class="m-0 t-0 border-bottom border-bottom-dark">
     <b-navbar type="dark" variant="dark">
       <b-navbar-nav>
         <b-nav-item @click="toggleSidebar()">
@@ -18,6 +18,30 @@
             <i class="fas fa-user-circle tw-text-2xl"></i>
           </template>
           <b-dropdown-item :to="{name: 'user'}">Profile</b-dropdown-item>
+          <b-dropdown-item @click="logout()">Sign Out</b-dropdown-item>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
+    </b-navbar>
+  </div> -->
+
+  <div class="m-0 t-0 border-bottom border-bottom-dark">
+    <b-navbar type="dark" variant="dark">
+      <b-navbar-nav>
+        <b-nav-item @click="toggleSidebar()">
+          <i
+            class="fas tw-text-2xl"
+            :class="{'fa-bars': !sidebar, 'fa-angle-double-left': sidebar, }"
+          ></i>
+        </b-nav-item>
+      </b-navbar-nav>
+
+      <b-navbar-nav class="ml-auto">
+        <b-nav-item-dropdown right :no-caret="true">
+          <template slot="button-content">
+            <i class="fas fa-user-circle tw-text-2xl"></i>
+          </template>
+          <b-dropdown-item :to="{name: 'user'}">Profile</b-dropdown-item>
+          <b-dropdown-divider></b-dropdown-divider>
           <b-dropdown-item @click="logout()">Sign Out</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
