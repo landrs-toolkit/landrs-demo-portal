@@ -64,12 +64,7 @@
                     return;
                 }
 
-<<<<<<< 3288444e25346252c1fc9ab56974c3d000995830
-                if (!that.$data.form.new_password.trim() && (that.$data.form.new_password.trim() !== that.$data.form.confirm_new_password.trim())) {
-=======
-                if (!that.$data.form.new_password1.trim() && (that.$data.form.new_password1.trim() !== that.$data.form
-                        .new_password2.trim())) {
->>>>>>> Change password with errors displaying
+                if (!that.$data.form.new_password1.trim() && (that.$data.form.new_password1.trim() !== that.$data.form.new_password2.trim())) {
                     that.$notify({
                         text: 'New passwords do not match.',
                         duration: 10000,
