@@ -4,42 +4,38 @@
         <div class="sidebar-sticky">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <b-link class="nav-link" :to="{name: 'home'}">
-                        <i class="fas fa-home"></i>
-                        Home
-                    </b-link>
-                </li>
-                <li class="nav-item">
                     <b-link class="nav-link" :to="{name: 'dashboard'}">
-                        <i class="fas fa-th-large"></i>
-                        Dashboard
+                        <b-img src="../../assets/crc-logo-full.png" fluid alt="logo"></b-img>
                     </b-link>
                 </li>
             </ul>
             <hr>
-            <ul class="nav flex-column">
+           <ul class="nav flex-column">
+               <li class="nav-item">
+                    <b-dropdown-header class="sidebar-heading pl-3">
+                        <i class="fas fa-user"></i>
+                        Account
+                    </b-dropdown-header>
+                </li>
                 <li class="nav-item">
                     <b-link class="nav-link" :to="{name: 'user'}">
-                        <i class="fas fa-user"></i>
                         Profile
                     </b-link>
                 </li>
                 <li class="nav-item">
                     <b-link class="nav-link" :to="{name: 'change-password'}">
-                        <i class="fas fa-key"></i>
                         Change Password
                     </b-link>
                 </li>
             </ul>
-            <hr>
+            <!-- <hr>
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <b-link class="nav-link" @click="logout()">
-                        <i class="fas fa-times"></i>
                         Sign Out
                     </b-link>
                 </li>
-            </ul>
+            </ul> -->
         </div>
     </div>
 
@@ -94,13 +90,16 @@
 
 <style>
     .sidebar {
-        background-color: whitesmoke;
+        background-color: white;
         box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
         padding-top: 15px;
     }
     .sidebar .nav-link {
-        font-weight: 500;
+        font-size: .9rem;
+        font-weight: 400;
         color: #666;
+        line-height: 1.3;
+        outline: 0;
     }
 
     .sidebar .nav-link .feather {
@@ -108,8 +107,10 @@
         color: #999;
     }
 
-    .sidebar .nav-link.active {
-        color: #007bff;
+    .sidebar .nav-link.router-link-active {
+        color: #333;/* #007bff; */
+        font-weight: 500;
+        background:rgba(0, 0, 0, .075);
     }
 
     .sidebar .nav-link:hover .feather,
@@ -118,7 +119,9 @@
     }
 
     .sidebar-heading {
-        font-size: .75rem;
+        font-size: .9rem;
         text-transform: uppercase;
+        color: #333;
+        font-weight: 600;
     }
 </style>

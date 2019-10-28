@@ -11,6 +11,8 @@ steps:
     when:
       branch:
         - develop
+      event:
+        - push
     environment:
       VUE_APP_AXIOS_BASE_URL:
         from_secret: VUE_APP_QA_AXIOS_BASE_URL
@@ -38,6 +40,8 @@ steps:
     when:
       branch:
         - master
+      event:
+        - push
     environment:
       VUE_APP_AXIOS_BASE_URL:
         from_secret: VUE_APP_PROD_AXIOS_BASE_URL

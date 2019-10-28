@@ -24,10 +24,10 @@
 
         <b-row class="my-3">
             <b-col sm="6" md="3" offset-md="3">
-                <b-button class="mt-2" variant="primary" block size="lg" @click="changePassword()">Change</b-button>
+                <b-button class="mt-3" variant="primary" block size="lg" @click="changePassword()">Change</b-button>
             </b-col>
             <b-col sm="6" md="3">
-                <b-button class="mt-2" variant="warning" block size="lg" @click="cancel()">Cancel</b-button>
+                <b-button class="mt-3" variant="outline-primary" block size="lg" @click="cancel()">Cancel</b-button>
             </b-col>
         </b-row>
 

@@ -1,7 +1,7 @@
 <template>
-  <footer class="footer mt-auto bg-gray-300">
+  <footer class="footer mt-auto border-top border-top-light " style="background:#f5f5f5">
     <b-container>
-      <b-row class="mt-5 tw-pt-10 tw-pb-8 tw-text-sm">
+      <b-row class="tw-pt-10 tw-pb-8 tw-text-sm">
         <b-col>
           <h6>BVCC</h6>
           <p class="text-gray-700">This research program is about something. It is supported by organization under grant #. Please contact the TS (Tech Sense) group for more information.</p>
@@ -22,17 +22,15 @@
         </b-col>
       </b-row>
     </b-container>
-    <div class="footer-copyright bg-gray-700">
-      <b-container class="text-center text-gray-400 py-2">
+    <div class="footer-copyright bg-white">
+      <b-container class="text-center tw-text-gray-600 py-2">
         <span>
           &copy;
           {{ new Date().getFullYear() }} —
           #techsense
         </span>
-        <span class="mx-3">|</span>
-        <b-link class="text-gray-400" :href="'https://github.com/crcresearch/bvcc'" target="_blank">GitHub</b-link>
-        <span class="mx-3">|</span>
-        <b-link class="text-gray-400" :href="'https://crc.nd.edu'" target="_blank">CRC</b-link>
+        <b-link class="mx-3" :href="'https://github.com/crcresearch/bvcc'" target="_blank">GitHub</b-link>
+        <b-link class="mx-3" :href="'https://crc.nd.edu'" target="_blank">CRC</b-link>
       </b-container>
     </div>
   </footer>

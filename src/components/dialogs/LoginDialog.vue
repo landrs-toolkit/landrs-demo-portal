@@ -18,7 +18,7 @@
         </b-container>
 
         <b-button class="mt-3" variant="primary" block size="lg" @click="login()">Sign In</b-button>
-        <b-button class="mt-2" variant="warning" block size="lg" @click="cancel()">Cancel</b-button>
+        <b-button class="mt-2" variant="outline-primary" block size="lg" @click="cancel()">Cancel</b-button>
         
         <div class="mt-3 text-center">
             <b-link class="mt-2" @click="forgotPassword()">Forgot Password</b-link>

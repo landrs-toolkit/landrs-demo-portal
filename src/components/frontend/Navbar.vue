@@ -1,30 +1,31 @@
 <template>
-    <b-navbar toggleable="md" type="dark" variant="dark">
-      <b-container>
-        <b-navbar-brand href="#">CRC BVCC</b-navbar-brand>
+  <b-navbar toggleable="md" fixed="top" type="dark" variant="dark">
+    <b-container>
+      <b-navbar-brand href="#">CRC BVCC</b-navbar-brand>
 
-        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
-        <b-collapse id="nav-collapse" is-nav>
-          <b-navbar-nav>
-          </b-navbar-nav>
+      <b-collapse id="nav-collapse" is-nav>
+        <b-navbar-nav>
+          <b-nav-item>About</b-nav-item>
+          <b-nav-item :to="{name: 'dashboard'}">Data Portal</b-nav-item>
+        </b-navbar-nav>
 
-          <b-navbar-nav class="ml-auto">
-            <b-nav-item>About</b-nav-item>
-            <b-nav-item :to="{name: 'dashboard'}">Dashboard</b-nav-item>
-            <b-nav-item-dropdown right no-caret="true"><template slot="button-content"><i class="fas fa-user-circle tw-text-2xl"></i></template>
-              <b-dropdown-item
-                :to="{name: 'login', query: { next: '/dashboard'}}"
-                v-if="!user.email"
-                >Sign In</b-dropdown-item>
-              <b-dropdown-item :to="{name: 'register'}" v-if="!user.email">
-                  Sign Up
-              </b-dropdown-item>
-            </b-nav-item-dropdown>
-          </b-navbar-nav>
-        </b-collapse>
-      </b-container>
-    </b-navbar>
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item-dropdown right no-caret="true">
+            <template slot="button-content">
+              <i class="fas fa-user-circle tw-text-2xl"></i>
+            </template>
+            <b-dropdown-item
+              :to="{name: 'login', query: { next: '/dashboard'}}"
+              v-if="!user.email"
+            >Sign In</b-dropdown-item>
+            <b-dropdown-item :to="{name: 'register'}" v-if="!user.email">Sign Up</b-dropdown-item>
+          </b-nav-item-dropdown>
+        </b-navbar-nav>
+      </b-collapse>
+    </b-container>
+  </b-navbar>
 </template>
 
 <script>
