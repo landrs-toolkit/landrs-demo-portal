@@ -86,14 +86,27 @@
                         name: 'user'
                     });
                 }).catch((error) => {
-                    let message = ('new_password2' in error.response.data) ? error.response.data.new_password2 : "could not reset your password";
-                    message.forEach(function(item) {
+                    if ("old_password" in error.response.data) {
                         that.$notify({
-                        text: item,
-                        duration: 10000,
-                        type: 'error'
+                            text: "Your old password was entered incorrectly. Please enter it again.",
+                            duration: 10000,
+                            type: "error"
                         });
-                    });
+                    } else if ("new_password2" in error.response.data) {
+                        error.response.data.new_password2.forEach(function(item) {
+                            that.$notify({
+                                text: item,
+                                duration: 10000,
+                                type: "error"
+                            });
+                        });
+                    } else {
+                        that.$notify({
+                            text: "Unknown error occurred.",
+                            duration: 10000,
+                            type: "error"
+                        });
+                    }
                 });
             },
             cancel: function () {
