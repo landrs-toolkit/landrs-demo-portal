@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <b-jumbotron header="BVCC" lead="Boostrap Vue Cookie Cutter" fluid="true"></b-jumbotron>
+    <b-jumbotron header="BVCC" lead="Boostrap Vue Cookie Cutter" :fluid="true"></b-jumbotron>
 
     <b-container class="my-5">
       <b-card-group deck>

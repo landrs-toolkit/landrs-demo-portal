@@ -12,7 +12,6 @@
 
     import BaseDialogMixin from '@/components/mixins/BaseDialogMixin.vue';
     import BaseAlertMixin from '@/components/mixins/BaseAlertMixin.vue';
-    import Footer from '@/components/frontend/Footer.vue';
 
     import {
         mapActions
@@ -22,9 +21,7 @@
 
     export default {
         mixins: [BaseDialogMixin, BaseAlertMixin],
-        components: {
-            Footer
-        },
+        components: {},
         beforeRouteEnter(to, from, next) {
             // this.setBaseComponent('BlankBaseTemplate.vue');
             store.dispatch('setBaseComponent', 'BlankBaseTemplate');

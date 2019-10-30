@@ -1,6 +1,6 @@
 <template>
 
-    <div class="h-100 sidebar">
+    <!-- <div class="h-100 sidebar">
         <div class="sidebar-sticky">
             <ul class="nav flex-column">
                 <li class="nav-item">
@@ -28,14 +28,65 @@
                     </b-link>
                 </li>
             </ul>
-            <!-- <hr>
+        </div>
+    </div> -->
+
+    <div class="h-100 sidebar">
+        <div class="sidebar-sticky">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <b-link class="nav-link" @click="logout()">
-                        Sign Out
+                    <b-link class="nav-link" :to="{name: 'dashboard'}">
+                        <b-img src="../../assets/crc-logo-full.png" fluid alt="logo"></b-img>
                     </b-link>
                 </li>
-            </ul> -->
+            </ul>
+            <hr>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <b-dropdown-header class="sidebar-heading">
+                        <i class="fas fa-th-large"></i>
+                        Dashboard
+                    </b-dropdown-header>
+                </li>
+
+                <li class="nav-item">
+                    <b-link class="nav-link" :to="{name: 'dashboard'}" exact>
+                        Main
+                    </b-link>
+                </li>
+            </ul>
+            <hr>
+
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <b-dropdown-header class="sidebar-heading">
+                        <i class="fas fa-user"></i>
+                        User
+                    </b-dropdown-header>
+                </li>
+                
+                <li class="nav-item">
+                    <b-link class="nav-link" :to="{name: 'user'}">
+                        Profile
+                    </b-link>
+                </li>
+            </ul>
+            <hr>
+
+            <ul class="nav flex-column" v-if="user.is_staff">
+                <li class="nav-item">
+                    <b-dropdown-header class="sidebar-heading">
+                        <i class="fas fa-users"></i>
+                        Manage
+                    </b-dropdown-header>
+                </li>
+                <li class="nav-item">
+                    <b-link class="nav-link" :to="{name: 'users'}">
+                        Users
+                    </b-link>
+                </li>
+            </ul>
+
         </div>
     </div>
 

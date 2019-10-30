@@ -12,7 +12,7 @@
         </b-navbar-nav>
 
         <b-navbar-nav class="ml-auto">
-          <b-nav-item-dropdown right no-caret="true">
+          <b-nav-item-dropdown right :no-caret="true">
             <template slot="button-content">
               <i class="fas fa-user-circle tw-text-2xl"></i>
             </template>
