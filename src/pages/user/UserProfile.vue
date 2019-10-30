@@ -34,10 +34,10 @@
                     <b-list-group-item>
                         <strong>Password: </strong> <b-button  :to="{name: 'change-password'}" pill variant="outline-secondary ml-2">Change</b-button>
                     </b-list-group-item>
-                    <!-- <b-list-group-item>
+                    <b-list-group-item>
                         <strong>Admin: </strong> {{user.is_staff ? 'Yes' : 'No'}}
                     </b-list-group-item>
-                    <b-list-group-item>
+                    <!-- <b-list-group-item>
                         <strong>Groups: </strong> {{myGroups.join(", ")}}
                     </b-list-group-item> -->
                 </b-list-group>

@@ -84,6 +84,16 @@ const router = new Router({
           component: UserProfile
         },
         {
+          path: 'edit-user/:userId',
+          name: 'edit-user',
+          component: EditUser
+        },
+        {
+          path: 'users',
+          name: 'users',
+          component: Users
+        },
+        {
           path: 'change-password',
           name: 'change-password',
           component: ChangePassword
