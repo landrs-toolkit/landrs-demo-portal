@@ -9,8 +9,10 @@ import ForgotPassword from './pages/ForgotPassword.vue'
 import DashboardRoot from './pages/dashboard/DashboardRoot.vue';
 import Dashboard from './pages/dashboard/Dashboard.vue';
 import UserProfile from './pages/user/UserProfile.vue';
-import ChangePassword from './pages/user/ChangePassword.vue'
-import ResetPassword from '@/pages/ResetPassword.vue'
+import ChangePassword from './pages/user/ChangePassword.vue';
+import ResetPassword from '@/pages/ResetPassword.vue';
+import EditUser from './pages/user/admin/EditUser.vue';
+import Users from './pages/user/admin/Users.vue';
 
 import Sample from './pages/sample/Sample.vue'
 
@@ -24,6 +26,10 @@ store.dispatch('initApp');
 
 store.dispatch('user/getUser').then(res => {
   store.dispatch('user/setUser', res.data);
+});
+
+store.dispatch('user/getMyGroups').then(res => {
+  store.dispatch('user/setMyGroups', res.data);
 });
 
 const router = new Router({
@@ -66,6 +72,16 @@ const router = new Router({
       path: '/sample/',
       name: 'sample',
       component: Sample
+    },
+    {
+      path: '/edit-user/:userID',
+      name: 'edit-user',
+      component: EditUser
+    },
+    {
+      path: '/users/',
+      name: 'users',
+      component: Users
     },
     {
       path: '/dashboard/',

@@ -67,7 +67,7 @@
             ...mapActions(['setAuthorizationToken', 'setBaseComponent']),
             ...mapActions('dialog', ['hideLoginDialog']),
             ...mapActions('alert', ['setSuccess', 'setError']),
-            ...mapActions('user', ['setUser', 'getUser']),
+            ...mapActions('user', ['setUser', 'getUser', 'setMyGroups', 'getMyGroups']),
             login: function () {
                 let that = this;
                 that.alert = false;
@@ -103,6 +103,11 @@
                             that.$router.go();// Reload the page.
                         }
                     });
+                that.getMyGroups().then(response => {
+                    that.setMyGroups(response.data)
+                }).catch(error => {
+                    HandleErrors.HandleErrors(error);
+                });
                 }).catch(() => {
                     that.alert = true;
                     that.payload.password = "";

@@ -39,7 +39,7 @@
                     </b-list-group-item>
                     <!-- <b-list-group-item>
                         <strong>Groups: </strong> {{myGroups.join(", ")}}
-                    </b-list-group-item> -->
+                    </b-list-group-item>
                 </b-list-group>
             </b-card>
 
@@ -62,7 +62,8 @@
         mixins: [DashboardBaseTemplate],
         computed: {
             ...mapState('user', [
-                'user'
+                'user',
+                'myGroups'
             ])
         },
         mounted: function () {
@@ -78,11 +79,17 @@
                 }).finally(() => {
                     that.hideLoadingDialog();
                 });
+
+                that.getMyGroups().then(response => {
+                    that.setMyGroups(response.data);
+                }).catch(error => {
+                    HandleErrors.HandleErrors(error);
+                });
             }
         },
         methods: {
             ...mapActions('user',
-                ['setUser', 'getUser']
+                ['setUser', 'getUser', 'getMyGroups', 'setMyGroups']
             )
         }
     }
