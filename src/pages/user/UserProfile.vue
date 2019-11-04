@@ -37,7 +37,7 @@
                     <b-list-group-item>
                         <strong>Admin: </strong> {{user.is_staff ? 'Yes' : 'No'}}
                     </b-list-group-item>
-                    <!-- <b-list-group-item>
+                    <b-list-group-item>
                         <strong>Groups: </strong> {{myGroups.join(", ")}}
                     </b-list-group-item>
                 </b-list-group>
@@ -79,13 +79,13 @@
                 }).finally(() => {
                     that.hideLoadingDialog();
                 });
-
-                that.getMyGroups().then(response => {
-                    that.setMyGroups(response.data);
-                }).catch(error => {
-                    HandleErrors.HandleErrors(error);
-                });
             }
+
+            that.getMyGroups().then(response => {
+                that.setMyGroups(response.data);
+            }).catch(error => {
+                HandleErrors.HandleErrors(error);
+            });
         },
         methods: {
             ...mapActions('user',

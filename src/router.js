@@ -74,16 +74,6 @@ const router = new Router({
       component: Sample
     },
     {
-      path: '/edit-user/:userID',
-      name: 'edit-user',
-      component: EditUser
-    },
-    {
-      path: '/users/',
-      name: 'users',
-      component: Users
-    },
-    {
       path: '/dashboard/',
       component: DashboardRoot,
       meta: {
