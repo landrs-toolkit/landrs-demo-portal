@@ -34,12 +34,12 @@
                     <b-list-group-item>
                         <strong>Password: </strong> <b-button  :to="{name: 'change-password'}" pill variant="outline-secondary ml-2">Change</b-button>
                     </b-list-group-item>
-                    <!-- <b-list-group-item>
+                    <b-list-group-item>
                         <strong>Admin: </strong> {{user.is_staff ? 'Yes' : 'No'}}
                     </b-list-group-item>
                     <b-list-group-item>
                         <strong>Groups: </strong> {{myGroups.join(", ")}}
-                    </b-list-group-item> -->
+                    </b-list-group-item>
                 </b-list-group>
             </b-card>
 
@@ -62,7 +62,8 @@
         mixins: [DashboardBaseTemplate],
         computed: {
             ...mapState('user', [
-                'user'
+                'user',
+                'myGroups'
             ])
         },
         mounted: function () {
@@ -79,10 +80,16 @@
                     that.hideLoadingDialog();
                 });
             }
+
+            that.getMyGroups().then(response => {
+                that.setMyGroups(response.data);
+            }).catch(error => {
+                HandleErrors.HandleErrors(error);
+            });
         },
         methods: {
             ...mapActions('user',
-                ['setUser', 'getUser']
+                ['setUser', 'getUser', 'getMyGroups', 'setMyGroups']
             )
         }
     }
