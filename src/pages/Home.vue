@@ -1,5 +1,6 @@
 <template>
-  <div class="">
+  <BaseTemplate>
+
     <b-jumbotron header="BVCC" lead="Boostrap Vue Cookie Cutter" :fluid="true"></b-jumbotron>
 
     <b-container class="my-5">
@@ -47,7 +48,8 @@
         </b-card>
       </b-card-group>
     </b-container>
-  </div>
+
+  </BaseTemplate>
 </template>
 
 <script>
@@ -56,6 +58,9 @@ import BaseTemplate from "@/layouts/BaseTemplate.vue";
 
 export default {
   name: "home",
-  mixins: [BaseTemplate]
+  mixins: [BaseTemplate],
+  components: {
+    BaseTemplate
+  }
 };
 </script>

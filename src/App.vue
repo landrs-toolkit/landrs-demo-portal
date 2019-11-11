@@ -1,18 +1,13 @@
 <template>
-  <div class="vw-100 min-vw-100 vh-100 min-vh-100 p-0 m-0">
+  <!-- <div class="vw-100 min-vw-100 vh-100 min-vh-100 p-0 m-0">
     <notifications position="bottom left" />
 
     <LoginDialog />
     <LoadingDialog />
-    <!-- <div>
-      
-      
-      
-      <MessageDialog />
-    </div> -->
-
     <component :is="getBaseComponent"></component>
-  </div>
+  </div> -->
+
+  <router-view></router-view>
 </template>
 
 <script>
@@ -25,7 +20,7 @@
   // Include the base templates that will replace the 'getBaseComponent'.
   import BaseTemplate from '@/layouts/BaseTemplate.vue';
   import DashboardBaseTemplate from '@/layouts/DashboardBaseTemplate.vue';
-  import BlankBaseTemplate from '@/layouts/BlankBaseTemplate.vue';
+  
 
   // Include the global Login/Message/Loading dialogs.
   import LoginDialog from '@/components/dialogs/LoginDialog.vue';
@@ -42,7 +37,7 @@
     components: {
       BaseTemplate,
       DashboardBaseTemplate,
-      BlankBaseTemplate,
+      // BlankBaseTemplate,
       LoginDialog,
       MessageDialog,
       LoadingDialog
