@@ -7,15 +7,21 @@ import router from './router'
 import store from './store/store'
 import Notifications from 'vue-notification'
 
+import BaseTemplate from '@/layouts/BaseTemplate.vue';
 import BlankBaseTemplate from '@/layouts/BlankBaseTemplate.vue';
+import DashboardBaseTemplate from '@/layouts/DashboardBaseTemplate.vue';
 
 Vue.config.productionTip = false
 
 Vue.use(Notifications);
 
-export default function (Vue, { head, router, isServer }) {
-  Vue.component('BlankBaseTemplate', BlankBaseTemplate)
-}
+// export default function (Vue, { head, router, isServer }) {
+  
+// }
+
+Vue.component('BaseTemplate', BaseTemplate)
+Vue.component('BlankBaseTemplate', BlankBaseTemplate)
+Vue.component('DashboardBaseTemplate', DashboardBaseTemplate)
 
 new Vue({
   router,

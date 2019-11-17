@@ -10,6 +10,7 @@
 
     <LoginDialog />
     <LoadingDialog />
+    <MessageDialog />
 
     <Navbar />
     <slot />
