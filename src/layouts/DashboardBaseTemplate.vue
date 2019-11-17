@@ -50,7 +50,10 @@ export default {
   components: {
     SideNavbar,
     TopNavbar,
-    Footer
+    Footer,
+    LoginDialog,
+    MessageDialog,
+    LoadingDialog
   },
   beforeRouteEnter(to, from, next) {
     store.dispatch("setBaseComponent", "DashboardBaseTemplate");
