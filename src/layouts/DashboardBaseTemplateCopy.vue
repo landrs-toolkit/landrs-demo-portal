@@ -1,12 +1,5 @@
 <template>
-
-  <div class="vw-100 min-vw-100 vh-100 min-vh-100 p-0 m-0">
-    <notifications position="bottom left" />
-
-    <LoginDialog />
-    <LoadingDialog />
-    <MessageDialog />
-
+  <div class="w-100 h-100 p-0 m-0">
     <div class="container-fluid w-100 h-100 m-0 p-0">
       <div class="h-100 row no-gutters">
         <div :class="{'col-sm-3': sidebar, 'col-md-2': sidebar, '': !sidebar}" v-if="sidebar">
@@ -15,13 +8,14 @@
         <div :class="{'col-sm-9': sidebar, 'col-md-10': sidebar, 'col-12': !sidebar}">
           <TopNavbar />
           <div class="w-100 h-100 p-3">
-            <slot />
+            <!-- <router-view></router-view> -->
           </div>
         </div>
       </div>
     </div>
-  </div>
 
+    <Footer />
+  </div>
 </template>
 
 <script>
@@ -37,10 +31,6 @@ import Footer from "@/components/dashboard/Footer.vue";
 import BaseDialogMixin from "@/components/mixins/BaseDialogMixin.vue";
 import BaseAlertMixin from "@/components/mixins/BaseAlertMixin.vue";
 
-import LoginDialog from "@/components/dialogs/LoginDialog.vue";
-import MessageDialog from "@/components/dialogs/MessageDialog.vue";
-import LoadingDialog from "@/components/dialogs/LoadingDialog.vue";
-
 import { mapActions, mapState } from "vuex";
 
 import store from "@/store/store";
@@ -50,10 +40,7 @@ export default {
   components: {
     SideNavbar,
     TopNavbar,
-    Footer,
-    LoginDialog,
-    MessageDialog,
-    LoadingDialog
+    Footer
   },
   beforeRouteEnter(to, from, next) {
     store.dispatch("setBaseComponent", "DashboardBaseTemplate");

@@ -8,6 +8,7 @@
 
     <LoginDialog />
     <LoadingDialog />
+    <MessageDialog />
 
     <slot />
   </div>

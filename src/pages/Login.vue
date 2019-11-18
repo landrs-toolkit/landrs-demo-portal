@@ -1,6 +1,6 @@
 <template>
     <BlankBaseTemplate>
-
+        
     </BlankBaseTemplate>
 </template>
 
@@ -10,9 +10,7 @@
 
     export default {
         mixins: [BlankBaseTemplate],
-        components: {
-            BlankBaseTemplate
-        },
+        components: {},
         mounted: function () {
             this.showLoginDialog();
         }
