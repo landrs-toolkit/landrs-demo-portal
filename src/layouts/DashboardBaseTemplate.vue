@@ -16,6 +16,7 @@
           <TopNavbar />
           <div class="w-100 h-100 p-3">
             <slot />
+            <Footer />
           </div>
         </div>
       </div>
