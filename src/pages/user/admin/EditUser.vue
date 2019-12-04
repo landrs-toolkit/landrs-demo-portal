@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 h-100">
-    <b-container>
+    <b-container class="tw-min-w-full">
       <b-row>
         <b-col cols="auto">
           <b-card

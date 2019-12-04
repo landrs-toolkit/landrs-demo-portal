@@ -54,6 +54,12 @@
                         Main
                     </b-link>
                 </li>
+
+                <li class="nav-item">
+                    <b-link class="nav-link" :to="{name: 'examples'}" exact>
+                        Examples
+                    </b-link>
+                </li>
             </ul>
             <hr>
 

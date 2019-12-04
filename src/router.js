@@ -14,7 +14,8 @@ import ResetPassword from '@/pages/ResetPassword.vue';
 import EditUser from './pages/user/admin/EditUser.vue';
 import Users from './pages/user/admin/Users.vue';
 
-import Sample from './pages/sample/Sample.vue'
+import Sample from '@/pages/sample/Sample.vue'
+import Examples from '@/pages/Examples.vue'
 
 import PageNotFound from './pages/PageNotFound.vue';
 
@@ -88,6 +89,11 @@ const router = new Router({
           path: 'user',
           name: 'user',
           component: UserProfile
+        },
+        {
+          path: 'examples',
+          name: 'examples',
+          component: Examples
         },
         {
           path: 'edit-user/:userId',

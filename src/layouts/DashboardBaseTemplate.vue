@@ -56,22 +56,22 @@ export default {
     MessageDialog,
     LoadingDialog
   },
-  beforeRouteEnter(to, from, next) {
-    store.dispatch("setBaseComponent", "DashboardBaseTemplate");
-    next();
-  },
-  beforeRouteUpdate(to, from, next) {
-    this.setBaseComponent("DashboardBaseTemplate");
-    next();
-  },
+  // beforeRouteEnter(to, from, next) {
+  //   store.dispatch("setBaseComponent", "DashboardBaseTemplate");
+  //   next();
+  // },
+  // beforeRouteUpdate(to, from, next) {
+  //   this.setBaseComponent("DashboardBaseTemplate");
+  //   next();
+  // },
   created: function() {
-    this.setBaseComponent("DashboardBaseTemplate");
+    // this.setBaseComponent("DashboardBaseTemplate");
   },
   computed: {
     ...mapState(["sidebar"])
   },
   methods: {
-    ...mapActions(["setBaseComponent"])
+    // ...mapActions(["setBaseComponent"])
   }
 };
 </script>

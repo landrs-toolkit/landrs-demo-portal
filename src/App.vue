@@ -18,8 +18,8 @@
    */
 
   // Include the base templates that will replace the 'getBaseComponent'.
-  import BaseTemplate from '@/layouts/BaseTemplate.vue';
-  import DashboardBaseTemplate from '@/layouts/DashboardBaseTemplate.vue';
+  // import BaseTemplate from '@/layouts/BaseTemplate.vue';
+  // import DashboardBaseTemplate from '@/layouts/DashboardBaseTemplate.vue';
   
 
   // Include the global Login/Message/Loading dialogs.
@@ -35,8 +35,8 @@
   export default {
     // Set the base templates and dialogs as components.
     components: {
-      BaseTemplate,
-      DashboardBaseTemplate,
+      // BaseTemplate,
+      // DashboardBaseTemplate,
       // BlankBaseTemplate,
       LoginDialog,
       MessageDialog,
