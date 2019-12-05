@@ -3,7 +3,7 @@ import store from '@/store/store';
 export default {
     HandleErrors (error, message = 'Error occured!') {
         if(error.response) {
-            if(error.response.status === 401) {
+            if(error.response.status === 401 || error.response.status === 403) {
                 store.dispatch('dialog/showLoginDialog');
             } else if(error.response.status === 404) {
                 store.dispatch({
