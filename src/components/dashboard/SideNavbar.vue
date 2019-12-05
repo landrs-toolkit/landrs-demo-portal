@@ -35,7 +35,7 @@
         <div class="sidebar-sticky">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <b-link class="nav-link" :to="{name: 'dashboard'}">
+                    <b-link class="nav-link" :to="{name: 'home'}">
                         <b-img src="../../assets/crc-logo-full.png" fluid alt="logo"></b-img>
                     </b-link>
                 </li>

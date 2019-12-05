@@ -21,6 +21,7 @@
               v-if="!user.email"
             >Sign In</b-dropdown-item>
             <b-dropdown-item :to="{name: 'register'}" v-if="!user.email">Sign Up</b-dropdown-item>
+            <b-dropdown-item :to="{name: 'dashboard'}" v-if="user.email">Data Portal</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
