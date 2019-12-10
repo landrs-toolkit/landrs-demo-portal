@@ -5,11 +5,10 @@
 </template>
 
 <script>
-    import BlankBaseTemplate from '@/layouts/BlankBaseTemplate.vue'
     import BaseDialogMixin from '@/components/mixins/BaseDialogMixin.vue';
 
     export default {
-        mixins: [BlankBaseTemplate],
+        mixins: [BaseDialogMixin],
         components: {},
         mounted: function () {
             this.showLoginDialog();

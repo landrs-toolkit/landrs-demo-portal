@@ -15,7 +15,9 @@ import EditUser from './pages/user/admin/EditUser.vue';
 import Users from './pages/user/admin/Users.vue';
 
 import Sample from '@/pages/sample/Sample.vue'
-import Examples from '@/pages/Examples.vue'
+import Components from '@/pages/Components.vue'
+import Map from '@/pages/Map.vue'
+import Charts from '@/pages/Charts.vue'
 
 import PageNotFound from './pages/PageNotFound.vue';
 
@@ -91,9 +93,19 @@ const router = new Router({
           component: UserProfile
         },
         {
-          path: 'examples',
-          name: 'examples',
-          component: Examples
+          path: 'components',
+          name: 'components',
+          component: Components
+        },
+        {
+          path: 'map',
+          name: 'map',
+          component: Map
+        },
+        {
+          path: 'charts',
+          name: 'charts',
+          component: Charts
         },
         {
           path: 'edit-user/:userId',

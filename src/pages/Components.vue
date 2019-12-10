@@ -1,18 +1,11 @@
 <template>
     <div class="h-100">
-        <h1 class="display-2">
-            {{title}}
-        </h1>
+        <h1>{{title}}</h1>
 
         <div class="text-left">
             <SampleComponent title="Sample Component called with method 1." />
             <hr>
             <sample-component title="Sample Component called with method 2."></sample-component>
-            <hr>
-            
-            <div class="tw-w-full tw-h-64">
-                <Map />
-            </div>
         </div>
     </div>
 </template>
@@ -22,15 +15,13 @@
     //     HTTP
     // } from '@/utilities/http-common';
     // import HandleErrors from '@/utilities/handle-errors';
-
-    import BaseTemplate from '@/layouts/BaseTemplate.vue'
+    
     import {
         mapState,
         // mapGetters,
         // mapActions
     } from 'vuex';
     import SampleComponent from '@/components/SampleComponent.vue';
-    import Map from '@/components/map/Map.vue';
 
     export default {
         mixins: [
@@ -38,12 +29,11 @@
             // DashboardBaseTemplate
         ],
         components: {
-            SampleComponent,
-            Map
+            SampleComponent
         },
         data: function () {
             return {
-                title: 'Example Page'
+                title: 'Example Component Page'
             }
         },
         computed: {

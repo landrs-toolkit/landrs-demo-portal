@@ -23,9 +23,9 @@
   
 
   // Include the global Login/Message/Loading dialogs.
-  import LoginDialog from '@/components/dialogs/LoginDialog.vue';
-  import MessageDialog from '@/components/dialogs/MessageDialog.vue';
-  import LoadingDialog from '@/components/dialogs/LoadingDialog.vue';
+  // import LoginDialog from '@/components/dialogs/LoginDialog.vue';
+  // import MessageDialog from '@/components/dialogs/MessageDialog.vue';
+  // import LoadingDialog from '@/components/dialogs/LoadingDialog.vue';
 
   import {
     mapGetters,
@@ -38,9 +38,9 @@
       // BaseTemplate,
       // DashboardBaseTemplate,
       // BlankBaseTemplate,
-      LoginDialog,
-      MessageDialog,
-      LoadingDialog
+      // LoginDialog,
+      // MessageDialog,
+      // LoadingDialog
     },
     computed: {
       // Map the base component getters and is authenticated getters.

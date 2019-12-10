@@ -40,9 +40,10 @@
 
 
 
-    </v-dialog> -->
+    </v-dialog>
     <div></div>
-  </v-layout>
+  </v-layout> -->
+  <div></div>
 
 
   <!-- <b-modal id="modal-no-backdrop" hide-backdrop content-class="shadow" title="BootstrapVue">

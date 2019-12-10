@@ -31,6 +31,8 @@
         HTTP
     } from '@/utilities/http-common';
 
+    import HandleErrors from "@/utilities/handle-errors";
+
     import {
         mapGetters,
         mapActions,

@@ -48,16 +48,34 @@
                         Dashboard
                     </b-dropdown-header>
                 </li>
-
                 <li class="nav-item">
                     <b-link class="nav-link" :to="{name: 'dashboard'}" exact>
                         Main
                     </b-link>
                 </li>
+            </ul>
+            <hr>
 
+            <ul class="nav flex-column">
                 <li class="nav-item">
-                    <b-link class="nav-link" :to="{name: 'examples'}" exact>
+                    <b-dropdown-header class="sidebar-heading">
+                        <i class="fas fa-th-large"></i>
                         Examples
+                    </b-dropdown-header>
+                </li>
+                <li class="nav-item">
+                    <b-link class="nav-link" :to="{name: 'components'}" exact>
+                        Components
+                    </b-link>
+                </li>
+                <li class="nav-item">
+                    <b-link class="nav-link" :to="{name: 'map'}" exact>
+                        Map
+                    </b-link>
+                </li>
+                <li class="nav-item">
+                    <b-link class="nav-link" :to="{name: 'charts'}" exact>
+                        Charts
                     </b-link>
                 </li>
             </ul>

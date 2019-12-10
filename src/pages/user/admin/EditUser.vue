@@ -61,7 +61,7 @@ import _ from "lodash";
 
 import DashboardBaseTemplate from "@/layouts/DashboardBaseTemplate.vue";
 
-import { mapActions, mapState } from "vuex";
+import { mapActions } from "vuex";
 
 export default {
   mixins: [DashboardBaseTemplate],
@@ -128,7 +128,7 @@ export default {
             "&user_id=" +
             that.$route.params.userId
         )
-          .then(response => {
+          .then(() => {
             that.$notify({
               text: "Group removed!",
               duration: 10000,
@@ -143,7 +143,7 @@ export default {
           user_id: that.$route.params.userId,
           group_id: that.groups[index].id
         })
-          .then(response => {
+          .then(() => {
             that.$notify({
               text: "Group added!",
               duration: 10000,

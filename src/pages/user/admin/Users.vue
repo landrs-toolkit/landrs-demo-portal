@@ -10,11 +10,11 @@
 
 <script>
 import { HTTP } from "@/utilities/http-common";
-import HandleErrors from "@/utilities/handle-errors";
+// import HandleErrors from "@/utilities/handle-errors";
 
 import DashboardBaseTemplate from "@/layouts/DashboardBaseTemplate.vue";
 
-import { mapActions, mapState } from "vuex";
+// import { mapActions, mapState } from "vuex";
 
 export default {
   mixins: [DashboardBaseTemplate],

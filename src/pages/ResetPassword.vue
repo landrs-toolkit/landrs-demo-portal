@@ -38,7 +38,7 @@
 <script>
 import { HTTP } from "@/utilities/http-common";
 
-import { mapGetters, mapActions, mapState } from "vuex";
+// import { mapGetters, mapActions, mapState } from "vuex";
 
 import DashboardBaseTemplate from "@/layouts/DashboardBaseTemplate.vue";
 
@@ -71,7 +71,7 @@ export default {
       that.$data.form.uid = that.$route.query.uidb64;
       that.$data.form.token = that.$route.query.token;
 
-      HTTP.post("/users/api/reset-password/", that.$data.form).then(response => {
+      HTTP.post("/users/api/reset-password/", that.$data.form).then(() => {
           that.$notify({
             text: "Password reset.",
             duration: 10000,

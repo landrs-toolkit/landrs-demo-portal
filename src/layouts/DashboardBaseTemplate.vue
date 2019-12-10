@@ -42,9 +42,9 @@ import LoginDialog from "@/components/dialogs/LoginDialog.vue";
 import MessageDialog from "@/components/dialogs/MessageDialog.vue";
 import LoadingDialog from "@/components/dialogs/LoadingDialog.vue";
 
-import { mapActions, mapState } from "vuex";
+import { mapState } from "vuex";
 
-import store from "@/store/store";
+// import store from "@/store/store";
 
 export default {
   mixins: [BaseDialogMixin, BaseAlertMixin],
