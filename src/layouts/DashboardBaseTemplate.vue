@@ -8,11 +8,21 @@
     <MessageDialog />
 
     <div class="container-fluid w-100 h-100 m-0 p-0">
-      <div class="h-100 row no-gutters">
-        <div :class="{'col-sm-3': sidebar, 'col-md-2': sidebar, '': !sidebar}" v-if="sidebar">
+      <!-- <div class="h-100 row no-gutters"> -->
+        <div class="h-100">
+        <!-- <div :class="{'col-sm-3': sidebar, 'col-md-2': sidebar, 'col-1': !sidebar}">
           <SideNavbar />
         </div>
-        <div :class="{'col-sm-9': sidebar, 'col-md-10': sidebar, 'col-12': !sidebar}">
+        <div :class="{'col-sm-9': sidebar, 'col-md-10': sidebar, 'col-11': !sidebar}">
+          <TopNavbar />
+          <div class="w-100 h-100 p-3">
+            <slot />
+            <Footer />
+          </div>
+        </div> -->
+
+        <SideNavbar />
+        <div class="d-inline-flex align-items-start" :class="{'': sidebar, '': !sidebar}">
           <TopNavbar />
           <div class="w-100 h-100 p-3">
             <slot />

@@ -31,7 +31,7 @@
         </div>
     </div> -->
 
-    <div class="h-100 sidebar">
+    <div class="d-inline-flex sidebar" :class="{'collapsed': !sidebar}">
         <div class="sidebar-sticky">
             <ul class="nav flex-column">
                 <li class="nav-item">
@@ -40,76 +40,25 @@
                     </b-link>
                 </li>
             </ul>
-            <hr>
-            <ul class="nav flex-column">
+            <br>
+            
+            <div v-for="(section, section_index) in menu" :key="section.title">
+                <ul class="nav flex-column" v-if="true">
                 <li class="nav-item">
                     <b-dropdown-header class="sidebar-heading">
-                        <i class="fas fa-th-large"></i>
-                        Dashboard
+                        <i class="fas" :class="[section.icon]" v-if="section.icon"></i>
+                        {{section.title}}
                     </b-dropdown-header>
                 </li>
-                <li class="nav-item">
-                    <b-link class="nav-link" :to="{name: 'dashboard'}" exact>
-                        Main
+                <li class="nav-item" v-for="link in section.links" :key="link.title">
+                    <b-link class="nav-link" :to="{name: link.name}">
+                        {{link.title}}
                     </b-link>
                 </li>
             </ul>
-            <hr>
 
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <b-dropdown-header class="sidebar-heading">
-                        <i class="fas fa-th-large"></i>
-                        Examples
-                    </b-dropdown-header>
-                </li>
-                <li class="nav-item">
-                    <b-link class="nav-link" :to="{name: 'components'}" exact>
-                        Components
-                    </b-link>
-                </li>
-                <li class="nav-item">
-                    <b-link class="nav-link" :to="{name: 'map'}" exact>
-                        Map
-                    </b-link>
-                </li>
-                <li class="nav-item">
-                    <b-link class="nav-link" :to="{name: 'charts'}" exact>
-                        Charts
-                    </b-link>
-                </li>
-            </ul>
-            <hr>
-
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <b-dropdown-header class="sidebar-heading">
-                        <i class="fas fa-user"></i>
-                        User
-                    </b-dropdown-header>
-                </li>
-                
-                <li class="nav-item">
-                    <b-link class="nav-link" :to="{name: 'user'}">
-                        Profile
-                    </b-link>
-                </li>
-            </ul>
-            <hr>
-
-            <ul class="nav flex-column" v-if="user.is_staff">
-                <li class="nav-item">
-                    <b-dropdown-header class="sidebar-heading">
-                        <i class="fas fa-users"></i>
-                        Manage
-                    </b-dropdown-header>
-                </li>
-                <li class="nav-item">
-                    <b-link class="nav-link" :to="{name: 'users'}">
-                        Users
-                    </b-link>
-                </li>
-            </ul>
+                <hr v-if="section_index < (menu.length - 1)">
+            </div>
 
         </div>
     </div>
@@ -126,10 +75,47 @@
         data() {
             return {
                 drawer: true,
+                menu: [
+                    {
+                        title: 'Dashboard',
+                        icon: 'fa-th-large',
+                        collapsible: true,
+                        links: [
+                            {title: 'Main', name: 'dashboard', params: {}, query: {}}
+                        ]
+                    },
+                    {
+                        title: 'Examples',
+                        icon: 'fa-th-large',
+                        collapsible: true,
+                        links: [
+                            {title: 'Components', name: 'components', params: {}, query: {}},
+                            {title: 'Map', name: 'map', params: {}, query: {}},
+                            {title: 'Charts', name: 'charts', params: {}, query: {}}
+                        ]
+                    },
+                    {
+                        title: 'User',
+                        icon: 'fa-user',
+                        collapsible: true,
+                        links: [
+                            {title: 'Profile', name: 'user', params: {}, query: {}}
+                        ]
+                    },
+                    {
+                        title: 'Manage',
+                        icon: 'fa-users',
+                        collapsible: false,
+                        links: [
+                            {title: 'Users', name: 'users', params: {}, query: {}}
+                        ]
+                    }
+                ]
             }
         },
         computed: {
-            ...mapState('user', ['user'])
+            ...mapState('user', ['user']),
+            ...mapState(['sidebar'])
         },
         methods: {
             ...mapActions([
@@ -165,9 +151,20 @@
 
 <style>
     .sidebar {
+        /* width: 250px;
+        max-width: 250px; */
+        min-width: 250px;
+        max-width: 250px;
         background-color: white;
         box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
         padding-top: 15px;
+        transition: all 0.6s cubic-bezier(0.945, 0.020, 0.270, 0.665);
+        transform-origin: bottom left;
+    }
+    .sidebar.collapsed {
+        min-width: 50px;
+        max-width: 50px;
+        /* transform: rotateY(100deg); */
     }
     .sidebar .nav-link {
         font-size: .9rem;
