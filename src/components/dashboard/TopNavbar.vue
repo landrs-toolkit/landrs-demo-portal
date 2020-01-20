@@ -27,7 +27,7 @@
   <div class="m-0 t-0 border-bottom border-bottom-dark">
     <b-navbar type="dark" variant="dark">
       <b-navbar-nav>
-        <b-nav-item @click="toggleSidebar()">
+        <b-nav-item @click="toggleSidebar()" class="side-bar-toggle">
           <i
             class="fas tw-text-2xl"
             :class="{'fa-bars': !sidebar, 'fa-angle-double-left': sidebar, }"
@@ -94,4 +94,13 @@ export default {
 </script>
 
 <style>
+.side-bar-toggle {
+  display: inline-block;
+}
+
+@media (max-width: 767.98px) { 
+  .side-bar-toggle {
+    display: none;
+  }
+}
 </style>

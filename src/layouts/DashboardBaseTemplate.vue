@@ -7,9 +7,9 @@
     <LoadingDialog />
     <MessageDialog />
 
-    <div class="container-fluid w-100 h-100 m-0 p-0">
-      <!-- <div class="h-100 row no-gutters"> -->
-        <div class="h-100">
+    <div class="container-fluid h-100 m-0 p-0">
+      
+      <div class="h-100 row no-gutters">
         <!-- <div :class="{'col-sm-3': sidebar, 'col-md-2': sidebar, 'col-1': !sidebar}">
           <SideNavbar />
         </div>
@@ -21,14 +21,25 @@
           </div>
         </div> -->
 
-        <SideNavbar />
-        <div class="d-inline-flex align-items-start" :class="{'': sidebar, '': !sidebar}">
+        <div class="col-auto">
+          <SideNavbar />
+        </div>
+        <div class="col">
           <TopNavbar />
           <div class="w-100 h-100 p-3">
             <slot />
             <Footer />
           </div>
         </div>
+
+        <!-- <SideNavbar />
+        <div class="d-inline-flex align-items-start" :class="{'': sidebar, '': !sidebar}">
+          <TopNavbar />
+          <div class="w-100 h-100 p-3">
+            <slot />
+            <Footer />
+          </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -87,4 +98,18 @@ export default {
 </script>
 
 <style>
+.drawer {
+    display: block;
+    background-color: white;
+    color: #ccc;
+    border-right: 1px solid gray;
+    min-height: 1px;
+    height: 100%;
+    width: 25%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    z-index: 20;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+}
 </style>
