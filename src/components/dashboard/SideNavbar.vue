@@ -1,16 +1,30 @@
 <template>
   <!-- Sidebar  -->
   <nav id="sidebar" :class="{ active: !sidebar }">
-    <div class="sidebar-header">
+    <!-- <div class="sidebar-header">
       <h3>CRC VCC</h3>
       <strong>CV</strong>
+    </div> -->
+
+    <div class="sidebar-header">
+      <b-img
+          class="full-logo"
+          src="../../assets/logo-full.png"
+          fluid
+          alt="logo"
+        ></b-img>
+        <b-img class="mini-logo" src="../../assets/logo.png" fluid alt="logo"></b-img>
     </div>
 
     <ul class="list-unstyled components">
       <li v-for="(section, section_index) in menu" :key="section.title">
+        <b-link v-if="section.link" :to="section.link" active-class="active">
+          <i class="fas" :class="[section.icon]"></i>
+          {{ section.title }}
+        </b-link>
         <b-link
-         :v-b-toggle="'collapse-' + section_index"
-         variant="link"
+          v-else
+          v-b-toggle="'collapse-' + section_index"
           data-toggle="collapse"
           aria-expanded="false"
           class="dropdown-toggle"
@@ -18,16 +32,10 @@
           <i class="fas" :class="[section.icon]"></i>
           {{ section.title }}
         </b-link>
-        <b-collapse :id="'collapse-' + section_index">
+        <b-collapse v-if="section.links" :id="'collapse-' + section_index">
           <ul class="collapse list-unstyled" id="homeSubmenu">
-            <li>
-              <a href="#">Home 1</a>
-            </li>
-            <li>
-              <a href="#">Home 2</a>
-            </li>
-            <li>
-              <a href="#">Home 3</a>
+            <li v-for="link in section.links" :key="link.name">
+              <a :to="link">{{ link.title }}</a>
             </li>
           </ul>
         </b-collapse>
@@ -101,7 +109,7 @@
       </li>
     </ul>
 
-    <ul class="list-unstyled CTAs">
+    <!-- <ul class="list-unstyled CTAs">
       <li>
         <a
           href="https://bootstrapious.com/tutorial/files/sidebar.zip"
@@ -114,7 +122,7 @@
           >Back to article</a
         >
       </li>
-    </ul>
+    </ul> -->
   </nav>
 
   <!-- <div class="sidebar" :class="{ expanded: sidebar }">
@@ -185,9 +193,10 @@ export default {
       menu: [
         {
           title: "Dashboard",
-          icon: "fa-th-large",
+          icon: "fa-home",
           collapsible: true,
-          links: [{ title: "Main", name: "dashboard", params: {}, query: {} }]
+          link: { name: "dashboard", params: {}, query: {} },
+          links: []
         },
         {
           title: "Examples",
@@ -200,16 +209,18 @@ export default {
           ]
         },
         {
-          title: "User",
+          title: "Profile",
           icon: "fa-user",
           collapsible: true,
-          links: [{ title: "Profile", name: "user", params: {}, query: {} }]
+          link: { name: "user", params: {}, query: {} },
+          links: []
         },
         {
-          title: "Manage",
+          title: "Users",
           icon: "fa-users",
           collapsible: false,
-          links: [{ title: "Users", name: "users", params: {}, query: {} }]
+          link: { name: "users", params: {}, query: {} },
+          links: []
         }
       ]
     };
@@ -270,11 +281,13 @@ export default {
 }
 
 #sidebar.active .sidebar-header h3,
+#sidebar.active .sidebar-header .mini-logo,
 #sidebar.active .CTAs {
   display: none;
 }
 
-#sidebar.active .sidebar-header strong {
+#sidebar.active .sidebar-header strong,
+#sidebar.active .sidebar-header .full-logo {
   display: block;
 }
 
@@ -423,10 +436,12 @@ a.article:hover {
     margin-left: 0 !important;
   }
   #sidebar .sidebar-header h3,
+  #sidebar.active .sidebar-header .mini-logo,
   #sidebar .CTAs {
     display: none;
   }
-  #sidebar .sidebar-header strong {
+  #sidebar .sidebar-header strong,
+  #sidebar.active .sidebar-header .full-logo {
     display: block;
   }
   #sidebar ul li a {
