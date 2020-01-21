@@ -2,11 +2,37 @@
   <!-- Sidebar  -->
   <nav id="sidebar" :class="{ active: !sidebar }">
     <div class="sidebar-header">
-      <h3>Bootstrap Sidebar</h3>
-      <strong>BS</strong>
+      <h3>CRC VCC</h3>
+      <strong>CV</strong>
     </div>
 
     <ul class="list-unstyled components">
+      <li v-for="(section, section_index) in menu" :key="section.title">
+        <b-link
+         :v-b-toggle="'collapse-' + section_index"
+         variant="link"
+          data-toggle="collapse"
+          aria-expanded="false"
+          class="dropdown-toggle"
+        >
+          <i class="fas" :class="[section.icon]"></i>
+          {{ section.title }}
+        </b-link>
+        <b-collapse :id="'collapse-' + section_index">
+          <ul class="collapse list-unstyled" id="homeSubmenu">
+            <li>
+              <a href="#">Home 1</a>
+            </li>
+            <li>
+              <a href="#">Home 2</a>
+            </li>
+            <li>
+              <a href="#">Home 3</a>
+            </li>
+          </ul>
+        </b-collapse>
+      </li>
+
       <li class="active">
         <a
           href="#homeSubmenu"
@@ -295,6 +321,10 @@ export default {
 #sidebar ul.components {
   padding: 20px 0;
   border-bottom: 1px solid #47748b;
+}
+
+a.disabled {
+  pointer-events: none;
 }
 
 #sidebar ul li a {
