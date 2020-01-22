@@ -7,7 +7,7 @@
     <LoadingDialog />
     <MessageDialog />
 
-    <div class="container-fluid h-100 m-0 p-0">
+    <div class="container-fluid h-100 m-0 p-0" v-resize:throttle="onResize">
       
       <div class="h-100 row no-gutters">
         <!-- <div :class="{'col-sm-3': sidebar, 'col-md-2': sidebar, 'col-1': !sidebar}">
@@ -63,12 +63,17 @@ import LoginDialog from "@/components/dialogs/LoginDialog.vue";
 import MessageDialog from "@/components/dialogs/MessageDialog.vue";
 import LoadingDialog from "@/components/dialogs/LoadingDialog.vue";
 
-import { mapState } from "vuex";
+import resize from 'vue-resize-directive';
+
+import { mapState, mapActions } from "vuex";
 
 // import store from "@/store/store";
 
 export default {
   mixins: [BaseDialogMixin, BaseAlertMixin],
+  directives: {
+    resize
+  },
   components: {
     SideNavbar,
     TopNavbar,
@@ -92,7 +97,17 @@ export default {
     ...mapState(["sidebar"])
   },
   methods: {
+    ...mapActions([
+      "toggleSidebar"
+    ]),
     // ...mapActions(["setBaseComponent"])
+    onResize: function() {
+      if(this.sidebar && window.outerWidth < 768) {
+        this.toggleSidebar();
+      } else if(!this.sidebar && window.outerWidth >= 768) {
+        this.toggleSidebar();
+      }
+    }
   }
 };
 </script>

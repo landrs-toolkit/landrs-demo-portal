@@ -27,8 +27,8 @@
 //     mapState, mapGetters, mapActions
 // } from 'vuex';
 
-import { L, LMap, LTileLayer, LMarker, LCircle, LRectangle, LLayerGroup } from "vue2-leaflet";
-import { latLng, Icon, icon, Marker, LayerGroup } from "leaflet";
+import { LMap, LTileLayer, LMarker, LCircle, LRectangle } from "vue2-leaflet";
+import { Icon, Marker, LayerGroup } from "leaflet";
 
 delete Icon.Default.prototype._getIconUrl;
 
