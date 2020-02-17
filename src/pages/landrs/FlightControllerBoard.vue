@@ -80,10 +80,67 @@
 
 
                     </b-form-group>
-                    <b-button variant="primary">Add {{ getFCB['@type'] | parseTitle }}</b-button>
+                    <b-button v-if="getFCB['@type']" variant="primary">Add {{ getFCB['@type'] | parseTitle }}</b-button>
                 </b-form>
             </b-card>
-<!--            <pre>{{ getFCB }}</pre>-->
+            <h4 v-if="fcbList.length" class="my-2">Instances</h4>
+            <b-card v-for="fcb in fcbList" :key="fcb['@id']" bg-variant="light">
+                <b-form>
+                    <b-form-group>
+                        <b-button-toolbar class="float-right">
+                            <b-button-group>
+                                <b-button variant="primary"><i class="fas fa-edit"></i></b-button>
+                                <b-button variant="danger"><i class="fas fa-trash"></i></b-button>
+                            </b-button-group>
+                        </b-button-toolbar>
+                    </b-form-group>
+                    <b-form-group
+                            v-for="item in instanceStructure(fcb)" :key="item"
+                            :label="`${item}:`"
+                            :label-for="`input-${item}`"
+                            label-cols-sm="1"
+                    >
+                        <b-form-input
+                                v-if="fcb[item].constructor.name === 'Object'"
+                                :id="`input-${item}`"
+                                type="text"
+                                required
+                                placeholder="Enter text"
+                                readonly
+                                :value="fcb[item]['@value']"
+                        ></b-form-input>
+                        <b-input-group
+                                v-if="fcb[item].constructor.name === 'String'"
+                                prepend="http"
+                        >
+                            <b-form-input
+                                    :id="`input-${item}`"
+                                    type="url"
+                                    required
+                                    placeholder="Enter URL"
+                                    readonly
+                                    :value="fcb[item]"
+                            ></b-form-input>
+                        </b-input-group>
+                        <b-form-group v-if="fcb[item].constructor.name === 'Array'">
+                            <b-input-group
+                                    v-for="(urlString, urlIndex) in fcb[item]"
+                                    :key="urlIndex"
+                                    prepend="http"
+                            >
+                                <b-form-input
+                                        :id="`input-${item}`"
+                                        type="url"
+                                        required
+                                        placeholder="Enter URL"
+                                        readonly
+                                        :value="urlString"
+                                ></b-form-input>
+                            </b-input-group>
+                        </b-form-group>
+                    </b-form-group>
+                </b-form>
+            </b-card>
         </b-container>
     </BaseTemplate>
 </template>
@@ -103,6 +160,11 @@ export default {
   components: {
     BaseTemplate
   },
+  data: function () {
+    return {
+      fcbList: []
+    };
+  },
   computed: {
     ...mapGetters('landrs/fcb', ['getFCB']),
     fcbFormStructure () {
@@ -112,6 +174,7 @@ export default {
   },
   mounted: async function () {
     this.setFCB(await this.fetchFCB())
+    this.fcbList.push(this.getFCB);
   },
   filters: {
     parseTitle (itemType) {
@@ -121,7 +184,11 @@ export default {
   },
   methods: {
     ...mapActions('landrs/fcb', ['fetchFCB']),
-    ...mapMutations('landrs/fcb', ['setFCB'])
+    ...mapMutations('landrs/fcb', ['setFCB']),
+    instanceStructure (instance) {
+      const structure = Object.keys(instance);
+      return structure.filter(item => !ignoredKeys.includes(item));
+    }
   }
 }
 </script>
