@@ -19,6 +19,8 @@ import Components from '@/pages/Components.vue'
 import Map from '@/pages/Map.vue'
 import Charts from '@/pages/Charts.vue'
 
+import FlightControllerBoard from '@/pages/landrs/FlightControllerBoard';
+
 import PageNotFound from './pages/PageNotFound.vue';
 
 import store from './store/store';
@@ -26,6 +28,7 @@ import store from './store/store';
 Vue.use(Router)
 
 store.dispatch('initApp');
+/*
 
 store.dispatch('user/getUser').then(res => {
   store.dispatch('user/setUser', res.data);
@@ -34,6 +37,7 @@ store.dispatch('user/getUser').then(res => {
 store.dispatch('user/getMyGroups').then(res => {
   store.dispatch('user/setMyGroups', res.data);
 });
+*/
 
 const router = new Router({
   mode: 'history',
@@ -75,6 +79,11 @@ const router = new Router({
       path: '/sample/',
       name: 'sample',
       component: Sample
+    },
+    {
+      path: '/FlightControllerBoard/',
+      name: 'fcb',
+      component: FlightControllerBoard
     },
     {
       path: '/dashboard/',

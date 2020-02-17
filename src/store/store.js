@@ -2,9 +2,11 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 // import { stat } from 'fs';
 
-import sample from './modules/sample';
+// import sample from './modules/sample';
 import user from './modules/user';
 import dialog from './modules/dialog';
+// import fcb from './modules/fcb';
+import landrs from './modules/landrs';
 
 import { HTTP } from '@/utilities/http-common';
 
@@ -13,9 +15,11 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   modules: {
-    sample: sample,
+    // sample: sample,
     user: user,
-    dialog: dialog
+    dialog: dialog,
+    // fcb: fcb,
+    landrs: landrs
   },
   state: {
     component: 'BaseTemplate',

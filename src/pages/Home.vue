@@ -1,50 +1,19 @@
 <template>
   <BaseTemplate>
 
-    <b-jumbotron header="BVCC" lead="Boostrap Vue Cookie Cutter" :fluid="true"></b-jumbotron>
+    <b-jumbotron header="Drone Portal" lead="Demo drone data portal" :fluid="true"></b-jumbotron>
 
     <b-container class="my-5">
+      <h4>Types</h4>
       <b-card-group deck>
         <b-card
-          title="Title"
-          img-src="https://picsum.photos/300/300/?image=41"
-          img-alt="Image"
-          img-top
-        >
+          v-for="item in getTypes"
+          :key="item['@id']"
+          :title="parseTitle(item['@type'])">
           <b-card-text>
-            This is a wider card with supporting text below as a natural lead-in to additional content.
-            This content is a little bit longer.
+            <b-link :href="item['@id']" target="_blank">Schema <i class="fas fa-external-link-alt"></i></b-link>
           </b-card-text>
-          <template v-slot:footer>
-            <small class="text-muted">Last updated 3 mins ago</small>
-          </template>
-        </b-card>
-
-        <b-card
-          title="Title"
-          img-src="https://picsum.photos/300/300/?image=41"
-          img-alt="Image"
-          img-top
-        >
-          <b-card-text>This card has supporting text below as a natural lead-in to additional content.</b-card-text>
-          <template v-slot:footer>
-            <small class="text-muted">Last updated 3 mins ago</small>
-          </template>
-        </b-card>
-
-        <b-card
-          title="Title"
-          img-src="https://picsum.photos/300/300/?image=41"
-          img-alt="Image"
-          img-top
-        >
-          <b-card-text>
-            This is a wider card with supporting text below as a natural lead-in to additional content.
-            This card has even longer content than the first to show that equal height action.
-          </b-card-text>
-          <template v-slot:footer>
-            <small class="text-muted">Last updated 3 mins ago</small>
-          </template>
+          <b-button :to="item['@type'].split(':').pop()" variant="primary">Add new</b-button>
         </b-card>
       </b-card-group>
     </b-container>
@@ -54,13 +23,28 @@
 
 <script>
 // @ is an alias to /src
-import BaseTemplate from "@/layouts/BaseTemplate.vue";
+import BaseTemplate from '@/layouts/BaseTemplate.vue';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 
 export default {
-  name: "home",
+  name: 'home',
   mixins: [BaseTemplate],
   components: {
     BaseTemplate
+  },
+  computed: {
+    ...mapGetters('landrs', ['getTypes'])
+  },
+  mounted: async function () {
+    this.setTypes(await this.fetchTypes());
+  },
+  methods: {
+    ...mapActions('landrs', ['fetchTypes']),
+    ...mapMutations('landrs', ['setTypes']),
+    parseTitle (itemType) {
+      const type = itemType.split(':').pop();
+      return type.split(/(?=[A-Z][a-z])/).join(' ');
+    }
   }
 };
 </script>
