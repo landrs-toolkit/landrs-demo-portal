@@ -28,69 +28,44 @@
                                     placeholder="Enter URL"
                             ></b-form-input>
                         </b-input-group>
-                        <b-input-group
-                                v-if="getFCB[item].constructor.name === 'Array'"
-                                prepend="http"
-                        >
-                            <b-form-input
-                                    :id="`input-${item}`"
-                                    type="url"
-                                    required
-                                    placeholder="Enter URL"
-                            ></b-form-input>
-                            <b-input-group-append>
-                                <b-button variant="danger"><i class="fas fa-trash"></i></b-button>
-                            </b-input-group-append>
-                        </b-input-group>
-                        <b-input-group
-                                v-if="getFCB[item].constructor.name === 'Array'"
-                                prepend="http"
-                        >
-                            <b-form-input
-                                    :id="`input-${item}`"
-                                    type="url"
-                                    required
-                                    placeholder="Enter URL"
-                            ></b-form-input>
-                            <b-input-group-append>
-                                <b-button variant="danger"><i class="fas fa-trash"></i></b-button>
-                            </b-input-group-append>
-                        </b-input-group>
-                        <b-input-group
-                                v-if="getFCB[item].constructor.name === 'Array'"
-                                prepend="http"
-                        >
-                            <b-form-input
-                                    :id="`input-${item}`"
-                                    type="url"
-                                    required
-                                    placeholder="Enter URL"
-                            ></b-form-input>
-                            <b-input-group-append>
-                                <b-button variant="danger"><i class="fas fa-trash"></i></b-button>
-                            </b-input-group-append>
-                        </b-input-group>
-                        <b-button-group
-                                v-if="getFCB[item].constructor.name === 'Array'"
-                        >
-                            <b-button variant="outline-primary">
+                        <b-form-group v-if="getFCB[item].constructor.name === 'Array'">
+                            <b-input-group
+                                    v-for="(urlString, urlIndex) in fcbNewInstanceData[item]"
+                                    :key="urlIndex"
+                                    prepend="http"
+                            >
+                                <b-form-input
+                                        :id="`input-${item}`"
+                                        type="url"
+                                        required
+                                        placeholder="Enter URL"
+                                        v-model="urlString.value"
+                                        :key="urlIndex"
+                                ></b-form-input>
+                                <b-input-group-append>
+                                    <b-button variant="danger" @click="fcbNewInstanceData[item].splice(urlIndex, 1)" ><i class="fas fa-trash"></i></b-button>
+                                </b-input-group-append>
+                            </b-input-group>
+                            <b-button v-b-tooltip :title="`Add ${item} entry`" @click="fcbNewInstanceData[item].push({ value: '' })" variant="outline-primary">
                                 <i class="fas fa-plus"></i>
                             </b-button>
-                        </b-button-group>
-
-
+                        </b-form-group>
                     </b-form-group>
                     <b-button v-if="getFCB['@type']" variant="primary">Add {{ getFCB['@type'] | parseTitle }}</b-button>
                 </b-form>
             </b-card>
-            <h4 v-if="fcbList.length" class="my-2">Instances</h4>
-            <b-card v-for="fcb in fcbList" :key="fcb['@id']" bg-variant="light">
+
+            <h4 class="my-2">Instances</h4>
+            <b-card v-if="!fcbInstances.length" bg-variant="light">
+                No instances created!
+            </b-card>
+            <b-card v-for="fcb in fcbInstances" :key="fcb['@id']" bg-variant="light">
                 <b-form>
                     <b-form-group>
                         <b-button-toolbar class="float-right">
                             <b-button-group>
-                                <b-button variant="primary"><i class="fas fa-edit"></i></b-button>
-                                <b-button variant="danger"><i class="fas fa-trash"></i></b-button>
+                                <b-button v-b-tooltip title="Edit instance" variant="primary"><i class="fas fa-edit"></i></b-button>
+                                <b-button v-b-tooltip title="Remove instance" variant="danger"><i class="fas fa-trash"></i></b-button>
                             </b-button-group>
                         </b-button-toolbar>
                     </b-form-group>
@@ -162,7 +137,8 @@ export default {
   },
   data: function () {
     return {
-      fcbList: []
+      fcbInstances: [],
+      fcbNewInstanceData: {}
     };
   },
   computed: {
@@ -172,9 +148,10 @@ export default {
       return structure.filter(item => !ignoredKeys.includes(item));
     }
   },
-  mounted: async function () {
-    this.setFCB(await this.fetchFCB())
-    this.fcbList.push(this.getFCB);
+  created: async function () {
+    this.setFCB(await this.fetchFCB());
+    this.fcbInstances.push(this.getFCB);
+    this.initFormData();
   },
   filters: {
     parseTitle (itemType) {
@@ -188,6 +165,16 @@ export default {
     instanceStructure (instance) {
       const structure = Object.keys(instance);
       return structure.filter(item => !ignoredKeys.includes(item));
+    },
+    initFormData () {
+      // Init all array properties to an empty array
+      for (const entry of this.fcbFormStructure) {
+        if (this.getFCB[entry].constructor.name === 'Array') {
+          // NOTE: here we use Object.assign to enable VueJS reactivity on dynamically added Array properties.
+          // A regular property assignment does not enable reactivity.
+          this.fcbNewInstanceData = Object.assign({}, this.fcbNewInstanceData, { [entry]: [] });
+        }
+      }
     }
   }
 }
