@@ -74,7 +74,8 @@
       </div>
 
       <div class="container-fluid m-0 p-0">
-          <div class="row m-0 p-0" v-for="(section, section_index) in menu" :key="section.title">
+<!--          <div class="row m-0 p-0" v-for="(section, section_index) in menu" :key="section.title">-->
+          <div class="row m-0 p-0" v-for="section in menu" :key="section.title">
               <div class="text-center" :class="{'col': sidebar, 'col mx-0 py-1 border-top p-0': !sidebar}">
                   <i class="fas fa-lg" :class="[section.icon]"></i>
               </div>

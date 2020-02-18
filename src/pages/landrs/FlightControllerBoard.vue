@@ -3,7 +3,7 @@
         <b-container class="my-5">
             <h4 v-if="getFCB['@type']">{{ getFCB['@type'] | parseTitle }}</h4>
             <b-card bg-variant="light">
-                <b-form>
+                <b-form @submit="createNewInstance" v-if="showForm">
                     <b-form-group
                             v-for="item in fcbFormStructure" :key="item"
                             :label="`${item}:`"
@@ -16,6 +16,7 @@
                                 type="text"
                                 required
                                 placeholder="Enter text"
+                                v-model="fcbNewInstanceData[item]"
                         ></b-form-input>
                         <b-input-group
                                 v-if="getFCB[item].constructor.name === 'String'"
@@ -26,6 +27,7 @@
                                     type="url"
                                     required
                                     placeholder="Enter URL"
+                                    v-model="fcbNewInstanceData[item]"
                             ></b-form-input>
                         </b-input-group>
                         <b-form-group v-if="getFCB[item].constructor.name === 'Array'">
@@ -51,7 +53,7 @@
                             </b-button>
                         </b-form-group>
                     </b-form-group>
-                    <b-button v-if="getFCB['@type']" variant="primary">Add {{ getFCB['@type'] | parseTitle }}</b-button>
+                    <b-button v-if="getFCB['@type']" type="submit" variant="primary">Add {{ getFCB['@type'] | parseTitle }}</b-button>
                 </b-form>
             </b-card>
 
@@ -59,7 +61,7 @@
             <b-card v-if="!fcbInstances.length" bg-variant="light">
                 No instances created!
             </b-card>
-            <b-card v-for="fcb in fcbInstances" :key="fcb['@id']" bg-variant="light">
+            <b-card v-for="(fcb, fcbIndex) in fcbInstances" :key="fcbIndex" bg-variant="light">
                 <b-form>
                     <b-form-group>
                         <b-button-toolbar class="float-right">
@@ -138,7 +140,8 @@ export default {
   data: function () {
     return {
       fcbInstances: [],
-      fcbNewInstanceData: {}
+      fcbNewInstanceData: {},
+      showForm: true
     };
   },
   computed: {
@@ -148,7 +151,7 @@ export default {
       return structure.filter(item => !ignoredKeys.includes(item));
     }
   },
-  created: async function () {
+  mounted: async function () {
     this.setFCB(await this.fetchFCB());
     this.fcbInstances.push(this.getFCB);
     this.initFormData();
@@ -173,8 +176,40 @@ export default {
           // NOTE: here we use Object.assign to enable VueJS reactivity on dynamically added Array properties.
           // A regular property assignment does not enable reactivity.
           this.fcbNewInstanceData = Object.assign({}, this.fcbNewInstanceData, { [entry]: [] });
+        } else {
+          this.fcbNewInstanceData = Object.assign({}, this.fcbNewInstanceData, { [entry]: '' });
         }
       }
+    },
+    createNewInstance(evt) {
+      evt.preventDefault();
+      // Transform object arrays into string arrays
+      let newInstance = {};
+      for (const entry of this.fcbFormStructure) {
+        if (this.fcbNewInstanceData[entry] && this.fcbNewInstanceData[entry].constructor.name === 'Array') {
+          newInstance[entry] = this.fcbNewInstanceData[entry].map(item => item.value);
+          // Reset the instance form data
+          this.fcbNewInstanceData = Object.assign({}, this.fcbNewInstanceData, { [entry]: [] });
+        } else if(this.fcbNewInstanceData[entry]) {
+          newInstance[entry] = this.fcbNewInstanceData[entry];
+          // Reset the instance form data
+          this.fcbNewInstanceData = Object.assign({}, this.fcbNewInstanceData, { [entry]: '' });
+        }
+      }
+
+      // Add metadata
+      for (const key of ignoredKeys) {
+        if (this.getFCB[key]) {
+          newInstance[key] = this.getFCB[key];
+        }
+      }
+
+      this.fcbInstances.unshift(newInstance);
+      // Reset form state
+      this.showForm = false;
+      this.$nextTick(() => {
+        this.showForm = true;
+      })
     }
   }
 }
