@@ -67,7 +67,14 @@
                         <b-button-toolbar class="float-right">
                             <b-button-group>
                                 <b-button v-b-tooltip title="Edit instance" variant="primary"><i class="fas fa-edit"></i></b-button>
-                                <b-button v-b-tooltip title="Remove instance" variant="danger"><i class="fas fa-trash"></i></b-button>
+                                <b-button :id="`popover-target-${fcbIndex}`" title="Remove instance" variant="danger"><i class="fas fa-trash"></i></b-button>
+                                <b-popover :ref="`popover-${fcbIndex}`" :target="`popover-target-${fcbIndex}`" triggers="click blur" placement="top">
+                                    <template v-slot:title>
+                                        Remove Instance?
+                                        <b-button-close @click="$refs[`popover-${fcbIndex}`][0].$emit('close')" class="ml-2"></b-button-close>
+                                    </template>
+                                    <b-button @click="fcbInstances.splice(fcbIndex, 1)" size="sm" variant="primary">Yes, Remove</b-button>
+                                </b-popover>
                             </b-button-group>
                         </b-button-toolbar>
                     </b-form-group>
