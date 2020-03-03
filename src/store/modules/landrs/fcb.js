@@ -54,64 +54,64 @@ landrs:FlightControllerBoardShape
 # FlightControllerBoard mandatory properties
 ####
 sh:property [
-      sh:path schema:description ;
-      sh:minCount 1 ;
-      sh:maxCount 1 ;
-      sh:datatype xsd:string ;
- ] ;
- sh:property [
-      sh:path schema:identifier ;
-      sh:or ( [ sh:datatype xsd:string ; ]
-        [ sh:datatype xsd:anyURI ; ] ) ;
-      sh:minCount 1 ;
-      sh:maxCount 1 ;
- ] ;
- sh:property [
-      sh:path schema:name ;
-      sh:minCount 1 ;
-      sh:maxCount 1 ;
-      sh:datatype xsd:string ;
- ] ;
- sh:property [
-   sh:path sosa:hosts ;
-   sh:NodeKind sh:IRI ;
-   sh:class sosa:Sensor ;
-   sosa:minCount 1 ;
- ] ;
+  sh:path schema:description ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+  sh:datatype xsd:string ;
+] ;
+sh:property [
+  sh:path schema:identifier ;
+  sh:or ( [ sh:datatype xsd:string ; ]
+    [ sh:datatype xsd:anyURI ; ] ) ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+] ;
+sh:property [
+  sh:path schema:name ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+  sh:datatype xsd:string ;
+] ;
+sh:property [
+  sh:path sosa:hosts ;
+  sh:NodeKind sh:IRI ;
+  sh:class sosa:Sensor ;
+  sh:minCount 1 ;
+] ;
 ####
 # FlightControllerBoard recommended properties schema.org
 ####
- sh:property [
-      sh:path schema:manufacturer ;
-      sh:class schema:Organization ;
- ] ;
- sh:property [
-      sh:path schema:manufacturer ;
-      sh:class schema:Organization ;
-      sh:minCount 1 ;
-      sh:message "Manufacturer is recommended. Please fill in a value"@en ;
-      sh:severity sh:Warning ;
- ] ;
- sh:property [
-      sh:path schema:serialNumber ;
-      sh:datatype xsd:string ;
-      sh:maxCount 1 ;
- ] ;
- sh:property [
-      sh:path schema:serialNumber ;
-      sh:datatype xsd:string ;
-      sh:minCount 1 ;
-      sh:message "SerialNumber is recommended. Please fill in a value"@en ;
-      sh:severity sh:Warning ;
- ] ;
+#sh:property [
+#  sh:path schema:manufacturer ;
+#  sh:class schema:Organization ;
+#] ;
+sh:property [
+  sh:path schema:manufacturer ;
+  sh:class schema:Organization ;
+  sh:minCount 1 ;
+  sh:message "Manufacturer is recommended. Please fill in a value"@en ;
+  sh:severity sh:Warning ;
+] ;
+#sh:property [
+#  sh:path schema:serialNumber ;
+#  sh:datatype xsd:string ;
+#  sh:maxCount 1 ;
+#] ;
+sh:property [
+  sh:path schema:serialNumber ;
+  sh:datatype xsd:string ;
+  sh:minCount 1 ;
+  sh:message "SerialNumber is recommended. Please fill in a value"@en ;
+  sh:severity sh:Warning ;
+] ;
 ####
 # Equipment optional properties
 ####
- #sh:property [
- #     sh:path dct:isPartOf ;
- #     sh:or ( [ sh:class epos:Equipment ; ]
- #       [ sh:class epos:Facility ; ] );
- #] ;
+#sh:property [
+#  sh:path dct:isPartOf ;
+#  sh:or ( [ sh:class epos:Equipment ; ]
+#    [ sh:class epos:Facility ; ] );
+#] ;
 .
 
 
@@ -122,27 +122,27 @@ sh:property [
   sh:path sosa:observes ;
   sh:NodeKind sh:IRI ;
   sh:class sosa:ObservableProperty ;
-  sosa:minCount 1 ;
+  sh:minCount 1 ;
 ] ;
 sh:property [
-      sh:path schema:description ;
-      sh:minCount 1 ;
-      sh:maxCount 1 ;
-      sh:datatype xsd:string ;
- ] ;
- sh:property [
-      sh:path schema:identifier ;
-      sh:or ( [ sh:datatype xsd:string ; ]
-        [ sh:datatype xsd:anyURI ; ] ) ;
-      sh:minCount 1 ;
-      sh:maxCount 1 ;
- ] ;
- sh:property [
-      sh:path schema:name ;
-      sh:minCount 1 ;
-      sh:maxCount 1 ;
-      sh:datatype xsd:string ;
- ] ;
+  sh:path schema:description ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+  sh:datatype xsd:string ;
+] ;
+sh:property [
+  sh:path schema:identifier ;
+  sh:or ( [ sh:datatype xsd:string ; ]
+    [ sh:datatype xsd:anyURI ; ] ) ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+] ;
+sh:property [
+  sh:path schema:name ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+  sh:datatype xsd:string ;
+] ;
 .
         `
       };

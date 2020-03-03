@@ -139,7 +139,13 @@
 <script>
 // @ is an alias to /src
 import BaseTemplate from '@/layouts/BaseTemplate.vue';
-import SHACLValidator from 'shacl'
+import SHACLValidator from 'shacl';
+import N3Parser from '@rdfjs/parser-n3';
+import rdf from 'rdf-ext';
+import { fromStream } from 'rdf-dataset-ext';
+import { Readable } from 'stream';
+import cf from 'clownface';
+import namespace from '@rdfjs/namespace'
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 
 const ignoredKeys = [
@@ -157,6 +163,7 @@ export default {
       fcbInstances: [],
       fcbNewInstanceData: {},
       fcbNewInstanceErrors: {},
+      validator: {},
       showForm: true
     };
   },
@@ -172,7 +179,101 @@ export default {
     this.setShape(await this.fetchShape());
     this.fcbInstances.push(this.getFCB);
     this.initFormData();
-    await this.validateInstanceData();
+    // todo remove the line below
+    // await this.validateInstanceData();
+    this.validator = new SHACLValidator();
+    await new Promise((resolve) => this.validator.updateShapesGraph(this.getShape, 'text/turtle', () => resolve()));
+    const parser = new N3Parser();
+    const input = new Readable({
+      read: () => {
+        input.push(this.getShape);
+        input.push(null)
+      }
+    });
+    const dataset = await fromStream(rdf.dataset(), parser.import(input));
+    // console.log(dataset.toString());
+    const graph = cf({ dataset, term: rdf.namedNode('http://dirtforecast.com:33000/FlightControllerBoardShape') });
+    // console.log(graph.toString());
+    // console.log(graph.dataset.toArray());
+    const shacl = namespace('http://www.w3.org/ns/shacl#');
+    // const xsd = namespace('http://www.w3.org/2001/XMLSchema#');
+    const rdf_syntax_ns = namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+    console.log(
+      graph
+        .out(shacl.property)
+        .map((propertyNode) => {
+          const constraints = {
+            path: propertyNode.out(shacl.path).value
+          };
+          // todo minCount
+          propertyNode
+            .has(shacl.minCount)
+            .out(shacl.minCount)
+            .forEach(minCount => (constraints.minCount = parseInt(minCount.value, 10)));
+          // todo maxCount
+          propertyNode
+            .has(shacl.maxCount)
+            .out(shacl.maxCount)
+            .forEach(maxCount => (constraints.maxCount = parseInt(maxCount.value, 10)));
+          // todo datatype
+          propertyNode
+            .has(shacl.datatype)
+            .out(shacl.datatype)
+            .forEach(datatype => (constraints.datatype = datatype.value));
+          // todo NodeKind
+          propertyNode
+            .has(shacl.NodeKind)
+            .out(shacl.NodeKind)
+            .forEach(datatype => (constraints.datatype = datatype.value));
+          // todo or type
+          const orTypes = [];
+          let orDataType = propertyNode
+            .has(shacl.or)
+            .out(shacl.or)
+            .out([rdf_syntax_ns.first, rdf_syntax_ns.rest]);
+          while (orDataType.out(shacl.datatype).value) {
+            orTypes.push(orDataType.out(shacl.datatype).value);
+            orDataType = orDataType.out([rdf_syntax_ns.first, rdf_syntax_ns.rest]);
+          }
+          if (orTypes.length) {
+            constraints.datatype = {
+              or: orTypes
+            }
+          }
+          // todo and type
+          const andTypes = [];
+          let andDataType = propertyNode
+            .has(shacl.and)
+            .out(shacl.and)
+            .out([rdf_syntax_ns.first, rdf_syntax_ns.rest]);
+          while (andDataType.out(shacl.datatype).value) {
+            andTypes.push(andDataType.out(shacl.datatype).value);
+            andDataType = andDataType.out([rdf_syntax_ns.first, rdf_syntax_ns.rest]);
+          }
+          if (andTypes.length) {
+            constraints.datatype = {
+              and: andTypes
+            }
+          }
+          // todo check for required properties
+          // todo if severity equals violation required is true
+          // todo if no severity required is true
+          constraints.required = true;
+          propertyNode
+            .has(shacl.severity)
+            .out(shacl.severity)
+            .forEach(severity => (constraints.required = severity.term.equals(shacl.Violation)));
+          // todo check maxCount for array input
+          if (!constraints.maxCount) {
+            constraints.isArray = true;
+          } else {
+            constraints.isArray = constraints.maxCount > 1;
+          }
+
+          return constraints;
+        })
+    );
+
   },
   filters: {
     parseTitle (itemType) {
@@ -274,7 +375,7 @@ schema:sameAs <http://docs.px4.io/master/en/flight_controller/cuav_v5_plus.html>
 schema:Model "CUAV 5+"@en ;
 schema:description "fcb description" ;
 schema:identifier "fcb identifier" ;
-schema:name "fcb name" ;
+#schema:name "fcb name" ;
 wdt:P31 wd:Q220858 ;
 sosa:hosts <id/OGIxYjVjOGEtOTgwZS00NDZhLTgzNTAtMzYyMzZlMzhjZDQ3Cg==> .
 
@@ -292,15 +393,8 @@ sosa:observableProperty <http://sweetontology.net/propSpaceDirection/Orientation
 sosa:observableProperty <http://sweetontology.net/propSpeed/Acceleration> .
       `;
 
-      const report = await new Promise((resolve, reject) => {
-        const validator = new SHACLValidator();
-        validator.validate(mockInstanceData, 'text/turtle', this.getShape, 'text/turtle', function(e, report) {
-          if (e) {
-            reject(e);
-          }
-          resolve(report);
-        });
-      });
+      await new Promise((resolve) => this.validator.updateDataGraph(mockInstanceData, 'text/turtle', () => resolve()));
+      const report = await new Promise((resolve, reject) => this.validator.showValidationResults((e, report) => e ? reject(e) : resolve(report)));
 
       let noViolations = true;
       if (!report.conforms()) {
