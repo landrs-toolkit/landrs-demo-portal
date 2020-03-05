@@ -4,7 +4,38 @@
             <h4 v-if="getFCB['@type']">{{ getFCB['@type'] | parseTitle }}</h4>
             <b-card bg-variant="light">
                 <b-form @submit.prevent="createNewInstance" v-if="showForm">
-                    <b-form-group
+                    <template
+                            v-for="property in formConstraints"
+                    >
+                        <b-form-group
+                                v-if="parseDataType(property.datatype).type !== '' && parseDataType(property.datatype).type !== 'or'"
+                                :key="property.path"
+                                :label="`${property.name}${property.required ? '*' : ''}:`"
+                                :label-for="`input-${property.name}`"
+                                label-cols-sm="2"
+                                label-align="right"
+                        >
+                            <b-input-group :prepend="parseDataType(property.datatype).type === 'url' ? 'http' : ''">
+                                <b-form-input
+                                        :id="`input-${property.name}`"
+                                        :type="parseDataType(property.datatype).type"
+                                        :required="property.required"
+                                        placeholder="Enter text"
+                                ></b-form-input>
+                            </b-input-group>
+                        </b-form-group>
+                        <b-form-group
+                                v-if="parseDataType(property.datatype).type === 'or'"
+                                :key="property.path"
+                                :label="`${property.name}${property.required ? '*' : ''}:`"
+                                :label-for="`input-${property.name}`"
+                                label-cols-sm="2"
+                                label-align="right"
+                        >
+                            <dynamic-input :property="property" :values="parseDataType(property.datatype).or"></dynamic-input>
+                        </b-form-group>
+                    </template>
+                    <!--<b-form-group
                             v-for="item in fcbFormStructure" :key="item"
                             :label="`${item}:`"
                             :label-for="`input-${item}`"
@@ -59,8 +90,9 @@
                                 <i class="fas fa-plus"></i>
                             </b-button>
                         </b-form-group>
-                    </b-form-group>
-                    <b-button v-if="getFCB['@type']" type="submit" variant="primary">Add {{ getFCB['@type'] | parseTitle }}</b-button>
+                    </b-form-group>-->
+<!--                    <b-button v-if="getFCB['@type']" type="submit" variant="primary">Add {{ getFCB['@type'] | parseTitle }}</b-button>-->
+                    <b-button type="submit" variant="primary">Add Flight Controller Board</b-button>
                 </b-form>
             </b-card>
 
@@ -147,16 +179,32 @@ import { Readable } from 'stream';
 import cf from 'clownface';
 import namespace from '@rdfjs/namespace'
 import { mapActions, mapGetters, mapMutations } from 'vuex';
+import dynamicInput from '@/components/landrs/DynamicInputGroup'
 
 const ignoredKeys = [
   '@id', '@type', '@context'
 ];
 
+const mapXsdTypes = (xsdType) => {
+  switch (xsdType) {
+    case 'string': return 'text';
+    case 'decimal': return 'number';
+    case 'float': return 'number';
+    case 'double': return 'number';
+    case 'IRI': return 'url';
+    case 'anyURI': return 'url';
+    case 'date': return 'date';
+    case 'time': return 'time';
+    default: return '';
+  }
+};
+
 export default {
   name: 'FlightControllerBoard',
   mixins: [BaseTemplate],
   components: {
-    BaseTemplate
+    BaseTemplate,
+    dynamicInput
   },
   data: function () {
     return {
@@ -164,6 +212,7 @@ export default {
       fcbNewInstanceData: {},
       fcbNewInstanceErrors: {},
       validator: {},
+      formConstraints: [],
       showForm: true
     };
   },
@@ -177,103 +226,325 @@ export default {
   mounted: async function () {
     this.setFCB(await this.fetchFCB());
     this.setShape(await this.fetchShape());
-    this.fcbInstances.push(this.getFCB);
+    // this.fcbInstances.push(this.getFCB);
     this.initFormData();
     // todo remove the line below
     // await this.validateInstanceData();
     this.validator = new SHACLValidator();
-    await new Promise((resolve) => this.validator.updateShapesGraph(this.getShape, 'text/turtle', () => resolve()));
-    const parser = new N3Parser();
-    const input = new Readable({
-      read: () => {
-        input.push(this.getShape);
-        input.push(null)
-      }
-    });
-    const dataset = await fromStream(rdf.dataset(), parser.import(input));
-    // console.log(dataset.toString());
-    const graph = cf({ dataset, term: rdf.namedNode('http://dirtforecast.com:33000/FlightControllerBoardShape') });
-    // console.log(graph.toString());
-    // console.log(graph.dataset.toArray());
-    const shacl = namespace('http://www.w3.org/ns/shacl#');
-    // const xsd = namespace('http://www.w3.org/2001/XMLSchema#');
-    const rdf_syntax_ns = namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
-    console.log(
-      graph
-        .out(shacl.property)
-        .map((propertyNode) => {
-          const constraints = {
-            path: propertyNode.out(shacl.path).value
-          };
-          // todo minCount
-          propertyNode
-            .has(shacl.minCount)
-            .out(shacl.minCount)
-            .forEach(minCount => (constraints.minCount = parseInt(minCount.value, 10)));
-          // todo maxCount
-          propertyNode
-            .has(shacl.maxCount)
-            .out(shacl.maxCount)
-            .forEach(maxCount => (constraints.maxCount = parseInt(maxCount.value, 10)));
-          // todo datatype
-          propertyNode
-            .has(shacl.datatype)
-            .out(shacl.datatype)
-            .forEach(datatype => (constraints.datatype = datatype.value));
-          // todo NodeKind
-          propertyNode
-            .has(shacl.NodeKind)
-            .out(shacl.NodeKind)
-            .forEach(datatype => (constraints.datatype = datatype.value));
-          // todo or type
-          const orTypes = [];
-          let orDataType = propertyNode
-            .has(shacl.or)
-            .out(shacl.or)
-            .out([rdf_syntax_ns.first, rdf_syntax_ns.rest]);
-          while (orDataType.out(shacl.datatype).value) {
-            orTypes.push(orDataType.out(shacl.datatype).value);
-            orDataType = orDataType.out([rdf_syntax_ns.first, rdf_syntax_ns.rest]);
-          }
-          if (orTypes.length) {
-            constraints.datatype = {
-              or: orTypes
-            }
-          }
-          // todo and type
-          const andTypes = [];
-          let andDataType = propertyNode
-            .has(shacl.and)
-            .out(shacl.and)
-            .out([rdf_syntax_ns.first, rdf_syntax_ns.rest]);
-          while (andDataType.out(shacl.datatype).value) {
-            andTypes.push(andDataType.out(shacl.datatype).value);
-            andDataType = andDataType.out([rdf_syntax_ns.first, rdf_syntax_ns.rest]);
-          }
-          if (andTypes.length) {
-            constraints.datatype = {
-              and: andTypes
-            }
-          }
-          // todo check for required properties
-          // todo if severity equals violation required is true
-          // todo if no severity required is true
-          constraints.required = true;
-          propertyNode
-            .has(shacl.severity)
-            .out(shacl.severity)
-            .forEach(severity => (constraints.required = severity.term.equals(shacl.Violation)));
-          // todo check maxCount for array input
-          if (!constraints.maxCount) {
-            constraints.isArray = true;
-          } else {
-            constraints.isArray = constraints.maxCount > 1;
-          }
+    /*const fcbShape = `
+#@prefix landrs: <https://schema.landrs.org/schema/> .
+@prefix landrs: <http://dirtforecast.com:33000/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix sosa-ext: <http://www.w3.org/ns/ssn/ext/> .
+@prefix ssn: <http://www.w3.org/ns/ssn/> .
+@prefix ssn-system: <http://www.w3.org/ns/ssn/systems/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-          return constraints;
-        })
-    );
+landrs:FlightControllerBoardShape
+  a sh:NodeShape ;
+  sh:targetClass landrs:FlightControllerBoard ;
+####
+# FlightControllerBoard mandatory properties
+####
+sh:property [
+  sh:path schema:description ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+  sh:datatype xsd:string ;
+] ;
+sh:property [
+  sh:path schema:identifier ;
+  sh:or ( [ sh:datatype xsd:string ; ]
+    [ sh:datatype xsd:anyURI ; ] ) ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+] ;
+sh:property [
+  sh:path schema:name ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+  sh:datatype xsd:string ;
+] ;
+sh:property [
+  sh:path sosa:hosts ;
+  sh:NodeKind sh:IRI ;
+  sh:class sosa:Sensor ;
+  sh:minCount 1 ;
+] ;
+####
+# FlightControllerBoard recommended properties schema.org
+####
+#sh:property [
+#  sh:path schema:manufacturer ;
+#  sh:class schema:Organization ;
+#] ;
+sh:property [
+  sh:path schema:manufacturer ;
+  sh:class schema:Organization ;
+  sh:minCount 1 ;
+  sh:message "Manufacturer is recommended. Please fill in a value"@en ;
+  sh:severity sh:Warning ;
+] ;
+#sh:property [
+#  sh:path schema:serialNumber ;
+#  sh:datatype xsd:string ;
+#  sh:maxCount 1 ;
+#] ;
+sh:property [
+  sh:path schema:serialNumber ;
+  sh:datatype xsd:string ;
+  sh:minCount 1 ;
+  sh:message "SerialNumber is recommended. Please fill in a value"@en ;
+  sh:severity sh:Warning ;
+] ;
+####
+# Equipment optional properties
+####
+#sh:property [
+#  sh:path dct:isPartOf ;
+#  sh:or ( [ sh:class epos:Equipment ; ]
+#    [ sh:class epos:Facility ; ] );
+#] ;
+.
+    `;
+    const sensorShape = `
+#@prefix landrs: <https://schema.landrs.org/schema/> .
+@prefix landrs: <http://dirtforecast.com:33000/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix sosa-ext: <http://www.w3.org/ns/ssn/ext/> .
+@prefix ssn: <http://www.w3.org/ns/ssn/> .
+@prefix ssn-system: <http://www.w3.org/ns/ssn/systems/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
+landrs:sensorShape
+  a sh:NodeShape ;
+  sh:targetClass sosa:Sensor ;
+#sh:property [
+#  sh:path sosa:observes ;
+#  sh:NodeKind sh:IRI ;
+#  sh:class sosa:ObservableProperty ;
+#  sh:minCount 1 ;
+#] ;
+sh:property [
+  sh:path schema:description ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+  sh:datatype xsd:string ;
+] ;
+sh:property [
+  sh:path schema:identifier ;
+  sh:or ( [ sh:datatype xsd:string ; ]
+    [ sh:datatype xsd:anyURI ; ] ) ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+] ;
+sh:property [
+  sh:path schema:name ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+  sh:datatype xsd:string ;
+] ;
+.
+    `;*/
+    const shapeData = `
+#@prefix landrs: <https://schema.landrs.org/schema/> .
+@prefix landrs: <http://dirtforecast.com:33000/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix sosa-ext: <http://www.w3.org/ns/ssn/ext/> .
+@prefix ssn: <http://www.w3.org/ns/ssn/> .
+@prefix ssn-system: <http://www.w3.org/ns/ssn/systems/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+landrs:FlightControllerBoardShape
+  a sh:NodeShape ;
+  sh:targetClass landrs:FlightControllerBoard ;
+####
+# FlightControllerBoard mandatory properties
+####
+sh:property [
+  sh:path schema:description ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+  sh:datatype xsd:string ;
+] ;
+sh:property [
+  sh:path schema:identifier ;
+  sh:or ( [ sh:datatype xsd:string ; ]
+    [ sh:datatype xsd:anyURI ; ] ) ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+] ;
+sh:property [
+  sh:path schema:name ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+  sh:datatype xsd:string ;
+] ;
+sh:property [
+  sh:path sosa:hosts ;
+  sh:NodeKind sh:IRI ;
+  sh:class sosa:Sensor ;
+  sh:minCount 1 ;
+] ;
+####
+# FlightControllerBoard recommended properties schema.org
+####
+#sh:property [
+#  sh:path schema:manufacturer ;
+#  sh:class schema:Organization ;
+#] ;
+sh:property [
+  sh:path schema:manufacturer ;
+  sh:class schema:Organization ;
+  sh:minCount 1 ;
+  sh:message "Manufacturer is recommended. Please fill in a value"@en ;
+  sh:severity sh:Warning ;
+] ;
+#sh:property [
+#  sh:path schema:serialNumber ;
+#  sh:datatype xsd:string ;
+#  sh:maxCount 1 ;
+#] ;
+sh:property [
+  sh:path schema:serialNumber ;
+  sh:datatype xsd:string ;
+  sh:minCount 1 ;
+  sh:message "SerialNumber is recommended. Please fill in a value"@en ;
+  sh:severity sh:Warning ;
+] ;
+####
+# Equipment optional properties
+####
+#sh:property [
+#  sh:path dct:isPartOf ;
+#  sh:or ( [ sh:class epos:Equipment ; ]
+#    [ sh:class epos:Facility ; ] );
+#] ;
+.
+
+
+landrs:sensorShape
+  a sh:NodeShape ;
+  sh:targetClass sosa:Sensor ;
+#sh:property [
+#  sh:path sosa:observes ;
+#  sh:NodeKind sh:IRI ;
+#  sh:class sosa:ObservableProperty ;
+#  sh:minCount 1 ;
+#] ;
+sh:property [
+  sh:path schema:description ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+  sh:datatype xsd:string ;
+] ;
+sh:property [
+  sh:path schema:identifier ;
+  sh:or ( [ sh:datatype xsd:string ; ]
+    [ sh:datatype xsd:anyURI ; ] ) ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+] ;
+sh:property [
+  sh:path schema:name ;
+  sh:minCount 1 ;
+  sh:maxCount 1 ;
+  sh:datatype xsd:string ;
+] ;
+.
+    `;
+    /*const shapes = `
+@prefix schema: <http://schema.org/> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix sosa:  <http://www.w3.org/ns/sosa/> .
+@prefix landrs: <https://ld.landrs.org/schema/> .
+@prefix drone: <http://dirtforecast.com:33000/> .
+
+landrs:FlightControllerBoardShape
+        a               sh:NodeShape ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:message   "SerialNumber is recommended. Please fill in a value"@en ;
+                          sh:minCount  1 ;
+                          sh:path      schema:serialNumber ;
+                          sh:severity  sh:Warning ;
+                        ] ;
+        sh:property     [ sh:NodeKind  sh:IRI ;
+                          sh:class     schema:Organization ;
+                          sh:message   "Manufacturer is recommended. Please fill in a value"@en ;
+                          sh:minCount  1 ;
+                          sh:path      schema:manufacturer ;
+                          sh:severity  sh:Warning ;
+                        ] ;
+        sh:property     [ sh:NodeKind    sh:IRI ;
+                          sh:class       sosa:Sensor ;
+                          sh:path        sosa:hosts ;
+                          sh:minCount  1 ;
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      schema:name ;
+                        ] ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:or ( [ sh:datatype xsd:string ; ]
+                                  [ sh:datatype xsd:anyURI ; ] ) ;
+                          sh:path      schema:identifier ;
+                        ] ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      schema:description ;
+                        ] ;
+        sh:targetClass  drone:FlightControllerBoard .
+
+landrs:sensorShape  a   sh:NodeShape ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      schema:name ;
+                        ] ;
+        sh:property     [ sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:or ( [ sh:datatype xsd:string ; ]
+                                  [ sh:datatype xsd:anyURI ; ] ) ;
+        sh:property     [ sh:datatype  xsd:string ;
+                          sh:maxCount  1 ;
+                          sh:minCount  1 ;
+                          sh:path      schema:description ;
+                        ] ;
+        sh:property     [ sh:NodeKind    sh:IRI ;
+                          sh:class       sosa:ObservableProperty ;
+                          sh:path        sosa:observes ;
+                          sh:minCount  1 ;
+                        ] ;
+        sh:targetClass  sosa:Sensor .
+    `;*/
+
+    console.log('started: updating shapes graph');
+    // await new Promise((resolve) => this.validator.updateShapesGraph(shapes, 'text/turtle', () => resolve()));
+    await new Promise((resolve) => this.validator.updateShapesGraph(shapeData, 'text/turtle', () => resolve()));
+    // await new Promise((resolve) => this.validator.parseShapesGraph(fcbShape, 'text/turtle', () => resolve()));
+    // await new Promise((resolve) => this.validator.parseShapesGraph(sensorShape, 'text/turtle', () => resolve()));
+    console.log('completed: updating shapes graph');
+    await this.initFormConstraints();
+    await this.validateInstanceData();
   },
   filters: {
     parseTitle (itemType) {
@@ -300,6 +571,126 @@ export default {
         }
         this.fcbNewInstanceErrors = Object.assign({}, this.fcbNewInstanceErrors, { [entry]: null });
       }
+    },
+    async initFormConstraints () {
+      const parser = new N3Parser();
+      const input = new Readable({
+        read: () => {
+          input.push(this.getShape);
+          input.push(null)
+        }
+      });
+      const dataset = await fromStream(rdf.dataset(), parser.import(input));
+      // console.log(dataset.toString());
+      const landrs = namespace('https://ld.landrs.org/schema/');
+      const shacl = namespace('http://www.w3.org/ns/shacl#');
+      const rdf_syntax_ns = namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+      // const xsd = namespace('http://www.w3.org/2001/XMLSchema#');
+      const graph = cf({ dataset, term: landrs.FlightControllerBoardShape });
+      // console.log(graph.toString());
+      // console.log(graph.dataset.toArray());
+
+      this.formConstraints = graph
+          .out(shacl.property)
+          .map((propertyNode) => {
+            const constraints = {
+              path: propertyNode.out(shacl.path).value,
+              name: propertyNode.out(shacl.path).value.match(/[^/|#]+$/)[0]
+            };
+            // todo minCount
+            propertyNode
+              .has(shacl.minCount)
+              .out(shacl.minCount)
+              .forEach(minCount => (constraints.minCount = parseInt(minCount.value, 10)));
+            // todo maxCount
+            propertyNode
+              .has(shacl.maxCount)
+              .out(shacl.maxCount)
+              .forEach(maxCount => (constraints.maxCount = parseInt(maxCount.value, 10)));
+            // todo datatype
+            propertyNode
+              .has(shacl.datatype)
+              .out(shacl.datatype)
+              .forEach(datatype => (constraints.datatype = datatype.value));
+            // todo NodeKind
+            propertyNode
+              .has(shacl.NodeKind)
+              .out(shacl.NodeKind)
+              .forEach(datatype => (constraints.datatype = datatype.value));
+            // todo or type
+            const orTypes = [];
+            let orDataType = propertyNode
+              .has(shacl.or)
+              .out(shacl.or)
+              .out([rdf_syntax_ns.first, rdf_syntax_ns.rest]);
+            while (orDataType.out(shacl.datatype).value) {
+              orTypes.push(orDataType.out(shacl.datatype).value);
+              orDataType = orDataType.out([rdf_syntax_ns.first, rdf_syntax_ns.rest]);
+            }
+            if (orTypes.length) {
+              constraints.datatype = {
+                or: orTypes
+              }
+            }
+            // todo and type
+            const andTypes = [];
+            let andDataType = propertyNode
+              .has(shacl.and)
+              .out(shacl.and)
+              .out([rdf_syntax_ns.first, rdf_syntax_ns.rest]);
+            while (andDataType.out(shacl.datatype).value) {
+              andTypes.push(andDataType.out(shacl.datatype).value);
+              andDataType = andDataType.out([rdf_syntax_ns.first, rdf_syntax_ns.rest]);
+            }
+            if (andTypes.length) {
+              constraints.datatype = {
+                and: andTypes
+              }
+            }
+            // todo check for required properties
+            // todo if severity equals violation required is true
+            // todo if no severity required is true
+            constraints.required = true;
+            propertyNode
+              .has(shacl.severity)
+              .out(shacl.severity)
+              .forEach(severity => (constraints.required = severity.term.equals(shacl.Violation)));
+            // todo check maxCount for array input
+            if (!constraints.maxCount) {
+              constraints.isArray = true;
+            } else {
+              constraints.isArray = constraints.maxCount > 1;
+            }
+
+            return constraints;
+          })
+          .sort((a, b) => a.required || b.required);
+      console.log(this.formConstraints);
+    },
+    parseDataType (datatype) {
+      if (typeof datatype === 'string') {
+        // todo parse URL string
+        const type = datatype.match(/[^/|#]+$/)[0];
+        // return mapXsdTypes(type);
+        return {
+          type: mapXsdTypes(type)
+        };
+      } else if (datatype.or) {
+        // todo parse array of types
+        // return '';
+        return {
+          type: 'or',
+          or: datatype.or.map(fulltype => mapXsdTypes(fulltype.match(/[^/|#]+$/)[0]))
+        };
+      } else if (datatype.and) {
+        // todo parse array of types
+        // return '';
+        return {
+          type: 'and',
+          and: datatype.and.map(item => mapXsdTypes(item))
+        };
+      }
+      return { type: '' };
     },
     async createNewInstance () {
       // TODO Validate data before saving a new instance
@@ -355,7 +746,7 @@ export default {
 @prefix ir: <http://www.ontologydesignpatterns.org/cp/owl/informationrealization.owl#> .
 @prefix st: <http://www.opengis.net/spec/iot_sensing/1.0/req/> .
 @prefix hydra: <http://www.w3.org/ns/hydra/core#> .
-#@prefix drone: <http://schema.landrs.org/schema/> .
+#@prefix drone: <https://ld.landrs.org/schema/> .
 @prefix drone: <http://dirtforecast.com:33000/> .
 @prefix geoschemas: <http://geoschemas.org/> .
 @prefix td: <https://www.w3.org/2019/wot/td#> .
@@ -405,7 +796,7 @@ sosa:observableProperty <http://sweetontology.net/propSpeed/Acceleration> .
           console.log(`message: ${result.message()}`);
           // TODO properly link the violation to the input element generated from the SHACL generated form
           if (result.path().endsWith('name')) {
-            this.fcbNewInstanceErrors['label'] = result.message();
+            this.fcbNewInstanceErrors['name'] = result.message();
             noViolations = false;
           }
         });

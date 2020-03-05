@@ -1,6 +1,4 @@
-import {
-  HTTP
-} from '@/utilities/http-common';
+import { HTTP } from '@/utilities/http-common';
 
 export default {
   namespaced: true,
@@ -26,12 +24,16 @@ export default {
   },
   actions: {
     async fetchFCB () {
-      const response = await HTTP.get('/schema/Thing/drone/fls/FlightControllerBoard?format=jsonld');
+      // todo fetch existing list of instances
+      // const response = await HTTP.get('/schema/Thing/drone/fls/FlightControllerBoard?format=jsonld');
+      const response = {
+        data: {}
+      };
       return response.data;
     },
     async fetchShape() {
       // TODO replace mock response with async call to API to fetch Shape data
-      const response = {
+      /*const response = {
         data: `
 #@prefix landrs: <https://schema.landrs.org/schema/> .
 @prefix landrs: <http://dirtforecast.com:33000/> .
@@ -147,7 +149,8 @@ sh:property [
         `
       };
 
-      return response.data;
+      return response.data;*/
+      return HTTP.get('/schema/FlightControllerBoardShape?format=ttl').then(response => response.data);
     }
   },
 }
