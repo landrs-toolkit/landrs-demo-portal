@@ -9,6 +9,8 @@
                 :type="selectedType"
                 :required="property.required"
                 placeholder="Enter text"
+                :value="value"
+                @input="$emit('input', $event)"
         ></b-form-input>
     </b-input-group>
 </template>
@@ -18,6 +20,9 @@
 export default {
   name: 'dynamic-input-group',
   props: {
+    value: {
+      type: String
+    },
     property: {
       type: Object
     },

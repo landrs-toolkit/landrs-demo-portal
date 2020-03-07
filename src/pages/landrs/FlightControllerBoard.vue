@@ -20,6 +20,7 @@
                                         :id="`input-${property.name}`"
                                         :type="parseDataType(property.datatype).type"
                                         :required="property.required"
+                                        v-model="formInstanceData[property.name]"
                                         placeholder="Enter text"
                                 ></b-form-input>
                             </b-input-group>
@@ -32,7 +33,7 @@
                                 label-cols-sm="2"
                                 label-align="right"
                         >
-                            <dynamic-input :property="property" :values="parseDataType(property.datatype).or"></dynamic-input>
+                            <dynamic-input v-model="formInstanceData[property.name]" :property="property" :values="parseDataType(property.datatype).or"></dynamic-input>
                         </b-form-group>
                     </template>
                     <!--<b-form-group
@@ -180,6 +181,9 @@ import cf from 'clownface';
 import namespace from '@rdfjs/namespace'
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 import dynamicInput from '@/components/landrs/DynamicInputGroup'
+import { DataFactory, Writer as N3Writer } from 'n3';
+const { namedNode, literal, quad } = DataFactory;
+import { v4 as uuidv4 } from 'uuid';
 
 const ignoredKeys = [
   '@id', '@type', '@context'
@@ -213,6 +217,8 @@ export default {
       fcbNewInstanceErrors: {},
       validator: {},
       formConstraints: [],
+      formInstanceData: {},
+      formInstanceErrors: {},
       showForm: true
     };
   },
@@ -226,10 +232,10 @@ export default {
   mounted: async function () {
     this.setFCB(await this.fetchFCB());
     this.setShape(await this.fetchShape());
+    // todo fetch available instances
     // this.fcbInstances.push(this.getFCB);
-    this.initFormData();
-    // todo remove the line below
-    // await this.validateInstanceData();
+    // todo remove
+    // this.initFormData();
     this.validator = new SHACLValidator();
     /*const fcbShape = `
 #@prefix landrs: <https://schema.landrs.org/schema/> .
@@ -537,14 +543,29 @@ landrs:sensorShape  a   sh:NodeShape ;
         sh:targetClass  sosa:Sensor .
     `;*/
 
-    console.log('started: updating shapes graph');
     // await new Promise((resolve) => this.validator.updateShapesGraph(shapes, 'text/turtle', () => resolve()));
     await new Promise((resolve) => this.validator.updateShapesGraph(shapeData, 'text/turtle', () => resolve()));
     // await new Promise((resolve) => this.validator.parseShapesGraph(fcbShape, 'text/turtle', () => resolve()));
     // await new Promise((resolve) => this.validator.parseShapesGraph(sensorShape, 'text/turtle', () => resolve()));
-    console.log('completed: updating shapes graph');
     await this.initFormConstraints();
-    await this.validateInstanceData();
+    this.initFormData();
+    // todo remove the line below
+    // await this.validateInstanceData();
+    /*
+    const writer = new N3Writer({ prefixes: { c: 'http://example.org/cartoons#' } });
+    const nodeId = btoa(uuidv4());
+    writer.addQuad(
+      namedNode(`id/${nodeId}`),
+      namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+      namedNode('http://example.org/cartoons#Cat')
+    );
+    writer.addQuad(quad(
+      namedNode(`id/${nodeId}`),
+      namedNode('http://example.org/cartoons#name'),
+      literal('Tom')
+    ));
+    writer.end((error, result) => console.log(result));
+    */
   },
   filters: {
     parseTitle (itemType) {
@@ -571,6 +592,12 @@ landrs:sensorShape  a   sh:NodeShape ;
         }
         this.fcbNewInstanceErrors = Object.assign({}, this.fcbNewInstanceErrors, { [entry]: null });
       }
+
+      // todo loop through constraints
+      for (const property of this.formConstraints) {
+        this.formInstanceData = Object.assign({}, this.formInstanceData, { [property.name]: '' });
+        this.formInstanceErrors = Object.assign({}, this.formInstanceErrors, { [property.name]: null })
+      }
     },
     async initFormConstraints () {
       const parser = new N3Parser();
@@ -582,6 +609,9 @@ landrs:sensorShape  a   sh:NodeShape ;
       });
       const dataset = await fromStream(rdf.dataset(), parser.import(input));
       // console.log(dataset.toString());
+      // console.log(await dataset.toJSON());
+      // console.log(dataset);
+      // debugger
       const landrs = namespace('https://ld.landrs.org/schema/');
       const shacl = namespace('http://www.w3.org/ns/shacl#');
       const rdf_syntax_ns = namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
@@ -693,6 +723,40 @@ landrs:sensorShape  a   sh:NodeShape ;
       return { type: '' };
     },
     async createNewInstance () {
+      // todo transform form data to turtle
+      console.log(this.formInstanceData);
+      const landrs = namespace('https://ld.landrs.org/schema/');
+
+      const rdf_syntax_ns = namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+      // todo gather prefixes
+      const writer = new N3Writer({
+        prefixes: {
+          c: 'http://example.org/cartoons#',
+          landrs: 'https://ld.landrs.org/schema/',
+          schema: 'http://schema.org/'
+        }
+      });
+
+      const nodeId = btoa(uuidv4());
+      // todo write node type
+      writer.addQuad(
+        namedNode(`id/${nodeId}`),
+        rdf_syntax_ns.type,
+        landrs.FlightControllerBoard
+      );
+
+      // todo write each property value
+      for (const propertyName of Object.keys(this.formInstanceData)) {
+        const constraint = this.formConstraints.find(con => con.name && con.name === propertyName);
+        writer.addQuad(quad(
+          namedNode(`id/${nodeId}`),
+          // namedNode('http://example.org/cartoons#name'),
+          namedNode(`${constraint.path}`),
+          literal('Tom')
+        ));
+      }
+
+      writer.end((error, result) => console.log(result));
       // TODO Validate data before saving a new instance
       if (!(await this.validateInstanceData())) {
         return;
