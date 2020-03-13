@@ -1,7 +1,12 @@
 <template>
     <b-input-group>
         <template v-slot:prepend>
-            <b-form-select v-model="selectedType" :options="values">
+            <b-form-select
+                    :value="selectedType"
+                    @change="$emit('updated', $event)"
+                    :options="values"
+                    :disabled="readonly"
+            >
             </b-form-select>
         </template>
         <b-form-input
@@ -10,7 +15,9 @@
                 :required="property.required"
                 placeholder="Enter text"
                 :value="value"
+                :readonly="readonly"
                 @input="$emit('input', $event)"
+                :state="state"
         ></b-form-input>
     </b-input-group>
 </template>
@@ -28,15 +35,17 @@ export default {
     },
     values: {
       type: Array
+    },
+    readonly: {
+      type: Boolean
+    },
+    selectedType: {
+      type: String
+    },
+    state: {
+      type: Boolean,
+      default: null
     }
-  },
-  data() {
-    return {
-      selectedType: null
-    };
-  },
-  mounted () {
-    this.selectedType = this.values[0];
   }
 }
 </script>
