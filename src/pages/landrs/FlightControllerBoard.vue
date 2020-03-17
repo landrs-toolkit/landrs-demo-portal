@@ -184,6 +184,30 @@
                             </b-input-group>
                         </b-form-group>
                         <b-form-group
+                                v-else-if="fcb[property.name] && property.isArray && parseDataType(property.datatype).type === 'or'"
+                                :key="property.path"
+                                :label="`${property.name}${property.required ? '*' : ''}:`"
+                                :label-for="`input-${property.name}`"
+                                label-cols-sm="2"
+                                label-align="right"
+                        >
+                            <b-input-group
+                                    v-for="(item, itemIndex) in fcb[property.name]"
+                                    :key="itemIndex"
+                                    :prepend="parseDataType(property.datatype).type === 'url' ? 'http' : ''"
+                            >
+                                <dynamic-input
+                                        :value="item.value"
+                                        :id="`input-${property.name}-${itemIndex}`"
+                                        :property="property"
+                                        :values="parseDataType(property.datatype).or"
+                                        :selectedType="item.type"
+                                        readonly
+                                >
+                                </dynamic-input>
+                            </b-input-group>
+                        </b-form-group>
+                        <b-form-group
                                 v-else-if="fcb[property.name] && !property.isArray && parseDataType(property.datatype).type !== '' && parseDataType(property.datatype).type !== 'or'"
                                 :key="property.path"
                                 :label="`${property.name}${property.required ? '*' : ''}:`"
@@ -645,15 +669,11 @@ sh:property [
       for (const entry of this.formConstraints) {
         if(this.formInstanceData[entry.name] && entry.isArray) {
           // todo add array to new instance
-          console.log(this.formInstanceData[entry.name]);
-          // debugger
           const nonEmptyValues = this.formInstanceData[entry.name].filter(item => item.value.length > 0);
           if (nonEmptyValues.length > 0) {
             newInstance[entry.name] = nonEmptyValues.map((item, itemIndex) => {
-              // debugger
               return {
                 value: item.value,
-                // type: this.formInstanceTypes[entry.name][itemIndex].value
                 type: self.formInstanceTypes[entry.name][itemIndex].value
               };
             });
