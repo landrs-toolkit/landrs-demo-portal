@@ -19,6 +19,7 @@
                 @input="$emit('input', $event)"
                 :state="state"
         ></b-form-input>
+        <slot></slot>
     </b-input-group>
 </template>
 

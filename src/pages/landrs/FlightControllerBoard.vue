@@ -8,7 +8,87 @@
                             v-for="property in formConstraints"
                     >
                         <b-form-group
-                                v-if="parseDataType(property.datatype).type !== '' && parseDataType(property.datatype).type !== 'or'"
+                                v-if="property.isArray && parseDataType(property.datatype).type !== '' && parseDataType(property.datatype).type !== 'or'"
+                                :key="property.path"
+                                :label="`${property.name}${property.required ? '*' : ''}:`"
+                                :label-for="`input-${property.name}`"
+                                label-cols-sm="2"
+                                label-align="right"
+                                :invalid-feedback="formInstanceErrors[property.name]"
+                                :state="!formInstanceErrors[property.name] ? formInstanceErrors[property.name] : false"
+                        >
+                            <b-input-group
+                                    v-for="(urlString, urlIndex) in formInstanceData[property.name]"
+                                    :key="urlIndex"
+                                    :prepend="parseDataType(property.datatype).type === 'url' ? 'http' : ''"
+                            >
+                                <b-form-input
+                                        :id="`input-${property.name}-${urlIndex}`"
+                                        :type="parseDataType(property.datatype).type"
+                                        :required="property.required"
+                                        placeholder="Enter text"
+                                        v-model="urlString.value"
+                                        :key="urlIndex"
+                                        @input="formInstanceErrors[property.name] = null"
+                                        :state="!formInstanceErrors[property.name] ? formInstanceErrors[property.name] : false"
+                                ></b-form-input>
+                                <b-input-group-append
+                                        v-if="!property.minCount || urlIndex >= property.minCount"
+                                >
+                                    <b-button variant="danger" @click="formInstanceData[property.name].splice(urlIndex, 1)" ><i class="fas fa-trash"></i></b-button>
+                                </b-input-group-append>
+                            </b-input-group>
+                            <b-button
+                                    v-if="!property.maxCount || formInstanceData[property.name].length < property.maxCount"
+                                    v-b-tooltip :title="`Add ${property.name} entry`"
+                                    @click="formInstanceData[property.name].push({ value: '' }) && formInstanceTypes[property.name].push({ value: parseDataType(property.datatype, property.name).type })"
+                                    variant="outline-primary"
+                            >
+                                <i class="fas fa-plus"></i>
+                            </b-button>
+                        </b-form-group>
+                        <b-form-group
+                                v-else-if="property.isArray && parseDataType(property.datatype).type === 'or'"
+                                :key="property.path"
+                                :label="`${property.name}${property.required ? '*' : ''}:`"
+                                :label-for="`input-${property.name}`"
+                                label-cols-sm="2"
+                                label-align="right"
+                                :invalid-feedback="formInstanceErrors[property.name]"
+                                :state="!formInstanceErrors[property.name] ? formInstanceErrors[property.name] : false"
+                        >
+                            <b-input-group
+                                    v-for="(urlString, urlIndex) in formInstanceData[property.name]"
+                                    :key="urlIndex"
+                                    :prepend="parseDataType(property.datatype).type === 'url' ? 'http' : ''"
+                            >
+                                <dynamic-input
+                                        v-model="urlString.value"
+                                        :property="property"
+                                        :values="parseDataType(property.datatype, property.name).or"
+                                        :selectedType="formInstanceTypes[property.name][urlIndex].value"
+                                        @updated="formInstanceTypes[property.name][urlIndex].value = $event"
+                                        @input="formInstanceErrors[property.name] = null"
+                                        :state="!formInstanceErrors[property.name] ? formInstanceErrors[property.name] : false"
+                                >
+                                    <b-input-group-append
+                                            v-if="!property.minCount || urlIndex >= property.minCount"
+                                    >
+                                        <b-button variant="danger" @click="formInstanceData[property.name].splice(urlIndex, 1)" ><i class="fas fa-trash"></i></b-button>
+                                    </b-input-group-append>
+                                </dynamic-input>
+                            </b-input-group>
+                            <b-button
+                                    v-if="!property.maxCount || formInstanceData[property.name].length < property.maxCount"
+                                    v-b-tooltip :title="`Add ${property.name} entry`"
+                                    @click="formInstanceData[property.name].push({ value: '' }) && formInstanceTypes[property.name].push({ value: parseDataType(property.datatype, property.name).or[0] })"
+                                    variant="outline-primary"
+                            >
+                                <i class="fas fa-plus"></i>
+                            </b-button>
+                        </b-form-group>
+                        <b-form-group
+                                v-else-if="!property.isArray && parseDataType(property.datatype).type !== '' && parseDataType(property.datatype).type !== 'or'"
                                 :key="property.path"
                                 :label="`${property.name}${property.required ? '*' : ''}:`"
                                 :label-for="`input-${property.name}`"
@@ -30,7 +110,7 @@
                             </b-input-group>
                         </b-form-group>
                         <b-form-group
-                                v-if="parseDataType(property.datatype).type === 'or'"
+                                v-else-if="!property.isArray && parseDataType(property.datatype).type === 'or'"
                                 :key="property.path"
                                 :label="`${property.name}${property.required ? '*' : ''}:`"
                                 :label-for="`input-${property.name}`"
@@ -81,7 +161,30 @@
                             v-for="property in formConstraints"
                     >
                         <b-form-group
-                                v-if="fcb[property.name] && parseDataType(property.datatype).type !== '' && parseDataType(property.datatype).type !== 'or'"
+                                v-if="fcb[property.name] && property.isArray && parseDataType(property.datatype).type !== '' && parseDataType(property.datatype).type !== 'or'"
+                                :key="property.path"
+                                :label="`${property.name}${property.required ? '*' : ''}:`"
+                                :label-for="`input-${property.name}`"
+                                label-cols-sm="2"
+                                label-align="right"
+                        >
+                            <b-input-group
+                                    v-for="(item, itemIndex) in fcb[property.name]"
+                                    :key="itemIndex"
+                                    :prepend="parseDataType(property.datatype).type === 'url' ? 'http' : ''"
+                            >
+                                <b-form-input
+                                        :id="`input-${property.name}-${itemIndex}`"
+                                        :type="fcb[property.name][itemIndex].type"
+                                        :required="property.required"
+                                        :value="fcb[property.name][itemIndex].value"
+                                        readonly
+                                        placeholder="Enter text"
+                                ></b-form-input>
+                            </b-input-group>
+                        </b-form-group>
+                        <b-form-group
+                                v-else-if="fcb[property.name] && !property.isArray && parseDataType(property.datatype).type !== '' && parseDataType(property.datatype).type !== 'or'"
                                 :key="property.path"
                                 :label="`${property.name}${property.required ? '*' : ''}:`"
                                 :label-for="`input-${property.name}`"
@@ -100,7 +203,7 @@
                             </b-input-group>
                         </b-form-group>
                         <b-form-group
-                                v-if="fcb[property.name] && parseDataType(property.datatype).type === 'or'"
+                                v-else-if="fcb[property.name] && !property.isArray && parseDataType(property.datatype).type === 'or'"
                                 :key="property.path"
                                 :label="`${property.name}${property.required ? '*' : ''}:`"
                                 :label-for="`input-${property.name}`"
@@ -308,13 +411,32 @@ sh:property [
     initFormData () {
       // todo loop through constraints
       for (const property of this.formConstraints) {
-        this.formInstanceData = Object.assign({}, this.formInstanceData, { [property.name]: '' });
-        this.formInstanceErrors = Object.assign({}, this.formInstanceErrors, { [property.name]: null });
-        const typeInfo = this.parseDataType(property.datatype);
-        if (typeInfo.type === 'or') {
-          this.formInstanceTypes = Object.assign({}, this.formInstanceTypes, { [property.name]: typeInfo.or[0] });
+        if (property.isArray) {
+          this.formInstanceData = Object.assign({}, this.formInstanceData, { [property.name]: [] });
+          // this.formInstanceErrors = Object.assign({}, this.formInstanceErrors, { [property.name]: [] });
+          this.formInstanceErrors = Object.assign({}, this.formInstanceErrors, { [property.name]: null });
+          this.formInstanceTypes = Object.assign({}, this.formInstanceTypes, { [property.name]: [] });
+          const typeInfo = this.parseDataType(property.datatype);
+          for (let i = 0; i < property.minCount; i++) {
+            this.formInstanceData[property.name].push({ value: '' });
+            // this.formInstanceErrors[property.name].push({ value: null });
+            if (typeInfo.type === 'or') {
+              this.formInstanceTypes[property.name].push({ value: typeInfo.or[0] });
+              // this.formInstanceTypes = Object.assign({}, this.formInstanceTypes, { [property.name]: typeInfo.or[0] });
+            } else {
+              this.formInstanceTypes[property.name].push({ value: typeInfo.type });
+              // this.formInstanceTypes = Object.assign({}, this.formInstanceTypes, { [property.name]: typeInfo.type });
+            }
+          }
         } else {
-          this.formInstanceTypes = Object.assign({}, this.formInstanceTypes, { [property.name]: typeInfo.type });
+          this.formInstanceData = Object.assign({}, this.formInstanceData, { [property.name]: '' });
+          this.formInstanceErrors = Object.assign({}, this.formInstanceErrors, { [property.name]: null });
+          const typeInfo = this.parseDataType(property.datatype);
+          if (typeInfo.type === 'or') {
+            this.formInstanceTypes = Object.assign({}, this.formInstanceTypes, { [property.name]: typeInfo.or[0] });
+          } else {
+            this.formInstanceTypes = Object.assign({}, this.formInstanceTypes, { [property.name]: typeInfo.type });
+          }
         }
       }
     },
@@ -340,7 +462,9 @@ sh:property [
           .map((propertyNode) => {
             const constraints = {
               path: propertyNode.out(shacl.path).value,
-              name: propertyNode.out(shacl.path).value.match(/[^/|#]+$/)[0]
+              name: propertyNode.out(shacl.path).value.match(/[^/|#]+$/)[0],
+              minCount: 0,
+              maxCount: 0
             };
             // todo minCount
             propertyNode
@@ -472,6 +596,7 @@ sh:property [
             literal(this.formInstanceData[propertyName])
           ));
         }
+        // todo expand array type data
       }
 
       const sensorId = btoa(uuidv4());
@@ -509,14 +634,32 @@ sh:property [
         // console.log(result);
       });
       // TODO Validate data before saving a new instance
-      if (!(await this.validateInstanceData(instanceData))) {
-        return;
-      }
+      console.log(instanceData);
+      // if (!(await this.validateInstanceData(instanceData))) {
+      //   return;
+      // }
 
       // Transform object arrays into string arrays
       let newInstance = {};
+      const self = this;
       for (const entry of this.formConstraints) {
-        if (this.formInstanceData[entry.name]) {
+        if(this.formInstanceData[entry.name] && entry.isArray) {
+          // todo add array to new instance
+          console.log(this.formInstanceData[entry.name]);
+          // debugger
+          const nonEmptyValues = this.formInstanceData[entry.name].filter(item => item.value.length > 0);
+          if (nonEmptyValues.length > 0) {
+            newInstance[entry.name] = nonEmptyValues.map((item, itemIndex) => {
+              // debugger
+              return {
+                value: item.value,
+                // type: this.formInstanceTypes[entry.name][itemIndex].value
+                type: self.formInstanceTypes[entry.name][itemIndex].value
+              };
+            });
+          }
+        } else if (this.formInstanceData[entry.name]) {
+          // todo expand array data type
           newInstance[entry.name] = {
             value: this.formInstanceData[entry.name],
             type: this.formInstanceTypes[entry.name]
@@ -532,6 +675,7 @@ sh:property [
       }
 
       this.fcbInstances.unshift(newInstance);
+      this.initFormData();
       // Reset form state
       this.showForm = false;
       this.$nextTick(() => {
