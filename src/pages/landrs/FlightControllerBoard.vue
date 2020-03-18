@@ -295,7 +295,7 @@ export default {
       formInstanceData: {},
       formInstanceTypes: {},
       formInstanceErrors: {},
-      showForm: true
+      showForm: false
     };
   },
   computed: {
@@ -422,6 +422,7 @@ sh:property [
     await new Promise((resolve) => this.validator.updateShapesGraph(shapeData, 'text/turtle', () => resolve()));
     await this.initFormConstraints();
     this.initFormData();
+    this.showForm = true;
   },
   filters: {
     parseTitle (itemType) {
@@ -433,23 +434,19 @@ sh:property [
     ...mapActions('landrs/fcb', ['fetchFCB', 'fetchShape']),
     ...mapMutations('landrs/fcb', ['setFCB', 'setShape']),
     initFormData () {
-      // todo loop through constraints
+      // iterate over constraints
       for (const property of this.formConstraints) {
         if (property.isArray) {
           this.formInstanceData = Object.assign({}, this.formInstanceData, { [property.name]: [] });
-          // this.formInstanceErrors = Object.assign({}, this.formInstanceErrors, { [property.name]: [] });
           this.formInstanceErrors = Object.assign({}, this.formInstanceErrors, { [property.name]: null });
           this.formInstanceTypes = Object.assign({}, this.formInstanceTypes, { [property.name]: [] });
           const typeInfo = this.parseDataType(property.datatype);
           for (let i = 0; i < property.minCount; i++) {
             this.formInstanceData[property.name].push({ value: '' });
-            // this.formInstanceErrors[property.name].push({ value: null });
             if (typeInfo.type === 'or') {
               this.formInstanceTypes[property.name].push({ value: typeInfo.or[0] });
-              // this.formInstanceTypes = Object.assign({}, this.formInstanceTypes, { [property.name]: typeInfo.or[0] });
             } else {
               this.formInstanceTypes[property.name].push({ value: typeInfo.type });
-              // this.formInstanceTypes = Object.assign({}, this.formInstanceTypes, { [property.name]: typeInfo.type });
             }
           }
         } else {
@@ -476,10 +473,7 @@ sh:property [
       const landrs = namespace('https://ld.landrs.org/schema/');
       const shacl = namespace('http://www.w3.org/ns/shacl#');
       const rdf_syntax_ns = namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
-      // const xsd = namespace('http://www.w3.org/2001/XMLSchema#');
       const graph = cf({ dataset, term: landrs.FlightControllerBoardShape });
-      // console.log(graph.toString());
-      // console.log(graph.dataset.toArray());
 
       this.formConstraints = graph
           .out(shacl.property)
@@ -490,27 +484,27 @@ sh:property [
               minCount: 0,
               maxCount: 0
             };
-            // todo minCount
+            // minCount
             propertyNode
               .has(shacl.minCount)
               .out(shacl.minCount)
               .forEach(minCount => (constraints.minCount = parseInt(minCount.value, 10)));
-            // todo maxCount
+            // maxCount
             propertyNode
               .has(shacl.maxCount)
               .out(shacl.maxCount)
               .forEach(maxCount => (constraints.maxCount = parseInt(maxCount.value, 10)));
-            // todo datatype
+            // datatype
             propertyNode
               .has(shacl.datatype)
               .out(shacl.datatype)
               .forEach(datatype => (constraints.datatype = datatype.value));
-            // todo NodeKind
+            // NodeKind
             propertyNode
               .has(shacl.NodeKind)
               .out(shacl.NodeKind)
               .forEach(datatype => (constraints.datatype = datatype.value));
-            // todo or type
+            // or type
             const orTypes = [];
             let orDataType = propertyNode
               .has(shacl.or)
@@ -525,7 +519,7 @@ sh:property [
                 or: orTypes
               }
             }
-            // todo and type
+            // and type
             const andTypes = [];
             let andDataType = propertyNode
               .has(shacl.and)
@@ -540,15 +534,15 @@ sh:property [
                 and: andTypes
               }
             }
-            // todo check for required properties
-            // todo if severity equals violation required is true
-            // todo if no severity required is true
+            // Check for required properties
+            // if severity equals violation required is true
+            // if no severity required is true
             constraints.required = true;
             propertyNode
               .has(shacl.severity)
               .out(shacl.severity)
               .forEach(severity => (constraints.required = severity.term.equals(shacl.Violation)));
-            // todo check maxCount for array input
+            // Check maxCount for array input
             if (!constraints.maxCount) {
               constraints.isArray = true;
             } else {
@@ -558,23 +552,22 @@ sh:property [
             return constraints;
           })
           .sort((a, b) => a.required || b.required);
-      // console.log(this.formConstraints);
     },
     parseDataType (datatype) {
       if (typeof datatype === 'string') {
-        // todo parse URL string
+        // parse URL string
         const type = datatype.match(/[^/|#]+$/)[0];
         return {
           type: mapXsdTypes(type)
         };
       } else if (datatype.or) {
-        // todo parse array of types
+        // parse array of types
         return {
           type: 'or',
           or: datatype.or.map(fulltype => mapXsdTypes(fulltype.match(/[^/|#]+$/)[0]))
         };
       } else if (datatype.and) {
-        // todo parse array of types
+        // parse array of types
         return {
           type: 'and',
           and: datatype.and.map(item => mapXsdTypes(item))
@@ -583,8 +576,7 @@ sh:property [
       return { type: '' };
     },
     async createNewInstance () {
-      // todo transform form data to turtle
-      // console.log(this.formInstanceData);
+      // Transform form data to turtle format
       // const landrs = namespace('https://ld.landrs.org/schema/');
       const landrs = namespace('http://dirtforecast.com:33000/');
       const schema = namespace('http://schema.org/');
@@ -602,25 +594,32 @@ sh:property [
 
       const boardId = btoa(uuidv4());
       let instanceData;
-      // todo write node type
+      // Write node type
       writer.addQuad(
         namedNode(`id/${boardId}`),
         rdf_syntax_ns.type,
         landrs.FlightControllerBoard
       );
 
-      // todo write each property value
-      for (const propertyName of Object.keys(this.formInstanceData)) {
-        if (propertyName === 'hosts') continue;
-        if (this.formInstanceData[propertyName]) {
-          const constraint = this.formConstraints.find(con => con.name && con.name === propertyName);
+      for (const constraint of this.formConstraints) {
+        // TODO remove preset hosts value
+        if (constraint.name === 'hosts') continue;
+        if (this.formInstanceData[constraint.name] && constraint.isArray) {
+          const nonEmptyValues = this.formInstanceData[constraint.name].filter(item => item.value.length > 0);
+          for (const entry of nonEmptyValues) {
+            writer.addQuad(quad(
+              namedNode(`id/${boardId}`),
+              namedNode(`${constraint.path}`),
+              literal(entry.value)
+            ));
+          }
+        } else {
           writer.addQuad(quad(
             namedNode(`id/${boardId}`),
             namedNode(`${constraint.path}`),
-            literal(this.formInstanceData[propertyName])
+            literal(this.formInstanceData[constraint.name])
           ));
         }
-        // todo expand array type data
       }
 
       const sensorId = btoa(uuidv4());
@@ -655,20 +654,18 @@ sh:property [
 
       writer.end((error, result) => {
         instanceData = result;
-        // console.log(result);
       });
-      // TODO Validate data before saving a new instance
-      console.log(instanceData);
-      // if (!(await this.validateInstanceData(instanceData))) {
-      //   return;
-      // }
+      // Validate data before saving a new instance
+      if (!(await this.validateInstanceData(instanceData))) {
+        return;
+      }
 
       // Transform object arrays into string arrays
       let newInstance = {};
       const self = this;
       for (const entry of this.formConstraints) {
         if(this.formInstanceData[entry.name] && entry.isArray) {
-          // todo add array to new instance
+          // Add array of values to new instance
           const nonEmptyValues = this.formInstanceData[entry.name].filter(item => item.value.length > 0);
           if (nonEmptyValues.length > 0) {
             newInstance[entry.name] = nonEmptyValues.map((item, itemIndex) => {
@@ -679,7 +676,6 @@ sh:property [
             });
           }
         } else if (this.formInstanceData[entry.name]) {
-          // todo expand array data type
           newInstance[entry.name] = {
             value: this.formInstanceData[entry.name],
             type: this.formInstanceTypes[entry.name]
@@ -693,8 +689,9 @@ sh:property [
           }
         }
       }
-
+      // TODO post the ttl data to the API
       this.fcbInstances.unshift(newInstance);
+      // reset the form
       this.initFormData();
       // Reset form state
       this.showForm = false;
@@ -710,7 +707,7 @@ sh:property [
       if (!report.conforms()) {
         const violations = report.results().filter(result => result.severity() === 'Violation');
         violations.forEach((result) => {
-          // TODO Link the violation with the corresponding input element generated from the SHACL generated form
+          // Link the violation with the corresponding input element generated from the SHACL generated form
           const propertyName = result.path().match(/[^/|#]+$/)[0];
           this.formInstanceErrors[propertyName] = result.message();
           noViolations = false;
