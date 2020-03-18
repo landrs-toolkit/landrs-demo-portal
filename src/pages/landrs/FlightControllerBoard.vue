@@ -8,7 +8,7 @@
                             v-for="property in formConstraints"
                     >
                         <b-form-group
-                                v-if="property.isArray && parseDataType(property.datatype).type !== '' && parseDataType(property.datatype).type !== 'or'"
+                                v-if="property.isArray && property.type !== '' && property.type !== 'or'"
                                 :key="property.path"
                                 :label="`${property.name}${property.required ? '*' : ''}:`"
                                 :label-for="`input-${property.name}`"
@@ -20,11 +20,11 @@
                             <b-input-group
                                     v-for="(urlString, urlIndex) in formInstanceData[property.name]"
                                     :key="urlIndex"
-                                    :prepend="parseDataType(property.datatype).type === 'url' ? 'http' : ''"
+                                    :prepend="property.type === 'url' ? 'http' : ''"
                             >
                                 <b-form-input
                                         :id="`input-${property.name}-${urlIndex}`"
-                                        :type="parseDataType(property.datatype).type"
+                                        :type="property.type"
                                         :required="property.required"
                                         placeholder="Enter text"
                                         v-model="urlString.value"
@@ -41,14 +41,14 @@
                             <b-button
                                     v-if="!property.maxCount || formInstanceData[property.name].length < property.maxCount"
                                     v-b-tooltip :title="`Add ${property.name} entry`"
-                                    @click="formInstanceData[property.name].push({ value: '' }) && formInstanceTypes[property.name].push({ value: parseDataType(property.datatype, property.name).type })"
+                                    @click="formInstanceData[property.name].push({ value: '' }) && formInstanceTypes[property.name].push({ value: property.type })"
                                     variant="outline-primary"
                             >
                                 <i class="fas fa-plus"></i>
                             </b-button>
                         </b-form-group>
                         <b-form-group
-                                v-else-if="property.isArray && parseDataType(property.datatype).type === 'or'"
+                                v-else-if="property.isArray && property.type === 'or'"
                                 :key="property.path"
                                 :label="`${property.name}${property.required ? '*' : ''}:`"
                                 :label-for="`input-${property.name}`"
@@ -60,12 +60,12 @@
                             <b-input-group
                                     v-for="(urlString, urlIndex) in formInstanceData[property.name]"
                                     :key="urlIndex"
-                                    :prepend="parseDataType(property.datatype).type === 'url' ? 'http' : ''"
+                                    :prepend="property.type === 'url' ? 'http' : ''"
                             >
                                 <dynamic-input
                                         v-model="urlString.value"
                                         :property="property"
-                                        :values="parseDataType(property.datatype, property.name).or"
+                                        :values="property.or"
                                         :selectedType="formInstanceTypes[property.name][urlIndex].value"
                                         @updated="formInstanceTypes[property.name][urlIndex].value = $event"
                                         @input="formInstanceErrors[property.name] = null"
@@ -81,14 +81,14 @@
                             <b-button
                                     v-if="!property.maxCount || formInstanceData[property.name].length < property.maxCount"
                                     v-b-tooltip :title="`Add ${property.name} entry`"
-                                    @click="formInstanceData[property.name].push({ value: '' }) && formInstanceTypes[property.name].push({ value: parseDataType(property.datatype, property.name).or[0] })"
+                                    @click="formInstanceData[property.name].push({ value: '' }) && formInstanceTypes[property.name].push({ value: property.or[0] })"
                                     variant="outline-primary"
                             >
                                 <i class="fas fa-plus"></i>
                             </b-button>
                         </b-form-group>
                         <b-form-group
-                                v-else-if="!property.isArray && parseDataType(property.datatype).type !== '' && parseDataType(property.datatype).type !== 'or'"
+                                v-else-if="!property.isArray && property.type !== '' && property.type !== 'or'"
                                 :key="property.path"
                                 :label="`${property.name}${property.required ? '*' : ''}:`"
                                 :label-for="`input-${property.name}`"
@@ -97,10 +97,10 @@
                                 :invalid-feedback="formInstanceErrors[property.name]"
                                 :state="!formInstanceErrors[property.name] ? formInstanceErrors[property.name] : false"
                         >
-                            <b-input-group :prepend="parseDataType(property.datatype).type === 'url' ? 'http' : ''">
+                            <b-input-group :prepend="property.type === 'url' ? 'http' : ''">
                                 <b-form-input
                                         :id="`input-${property.name}`"
-                                        :type="parseDataType(property.datatype).type"
+                                        :type="property.type"
                                         :required="property.required"
                                         v-model="formInstanceData[property.name]"
                                         placeholder="Enter text"
@@ -110,7 +110,7 @@
                             </b-input-group>
                         </b-form-group>
                         <b-form-group
-                                v-else-if="!property.isArray && parseDataType(property.datatype).type === 'or'"
+                                v-else-if="!property.isArray && property.type === 'or'"
                                 :key="property.path"
                                 :label="`${property.name}${property.required ? '*' : ''}:`"
                                 :label-for="`input-${property.name}`"
@@ -122,7 +122,7 @@
                             <dynamic-input
                                     v-model="formInstanceData[property.name]"
                                     :property="property"
-                                    :values="parseDataType(property.datatype, property.name).or"
+                                    :values="property.or"
                                     :selectedType="formInstanceTypes[property.name]"
                                     @updated="formInstanceTypes[property.name] = $event"
                                     @input="formInstanceErrors[property.name] = null"
@@ -161,7 +161,7 @@
                             v-for="property in formConstraints"
                     >
                         <b-form-group
-                                v-if="fcb[property.name] && property.isArray && parseDataType(property.datatype).type !== '' && parseDataType(property.datatype).type !== 'or'"
+                                v-if="fcb[property.name] && property.isArray && property.type !== '' && property.type !== 'or'"
                                 :key="property.path"
                                 :label="`${property.name}${property.required ? '*' : ''}:`"
                                 :label-for="`input-${property.name}`"
@@ -171,7 +171,7 @@
                             <b-input-group
                                     v-for="(item, itemIndex) in fcb[property.name]"
                                     :key="itemIndex"
-                                    :prepend="parseDataType(property.datatype).type === 'url' ? 'http' : ''"
+                                    :prepend="property.type === 'url' ? 'http' : ''"
                             >
                                 <b-form-input
                                         :id="`input-${property.name}-${itemIndex}`"
@@ -184,7 +184,7 @@
                             </b-input-group>
                         </b-form-group>
                         <b-form-group
-                                v-else-if="fcb[property.name] && property.isArray && parseDataType(property.datatype).type === 'or'"
+                                v-else-if="fcb[property.name] && property.isArray && property.type === 'or'"
                                 :key="property.path"
                                 :label="`${property.name}${property.required ? '*' : ''}:`"
                                 :label-for="`input-${property.name}`"
@@ -194,13 +194,13 @@
                             <b-input-group
                                     v-for="(item, itemIndex) in fcb[property.name]"
                                     :key="itemIndex"
-                                    :prepend="parseDataType(property.datatype).type === 'url' ? 'http' : ''"
+                                    :prepend="property.type === 'url' ? 'http' : ''"
                             >
                                 <dynamic-input
                                         :value="item.value"
                                         :id="`input-${property.name}-${itemIndex}`"
                                         :property="property"
-                                        :values="parseDataType(property.datatype).or"
+                                        :values="property.or"
                                         :selectedType="item.type"
                                         readonly
                                 >
@@ -208,17 +208,17 @@
                             </b-input-group>
                         </b-form-group>
                         <b-form-group
-                                v-else-if="fcb[property.name] && !property.isArray && parseDataType(property.datatype).type !== '' && parseDataType(property.datatype).type !== 'or'"
+                                v-else-if="fcb[property.name] && !property.isArray && property.type !== '' && property.type !== 'or'"
                                 :key="property.path"
                                 :label="`${property.name}${property.required ? '*' : ''}:`"
                                 :label-for="`input-${property.name}`"
                                 label-cols-sm="2"
                                 label-align="right"
                         >
-                            <b-input-group :prepend="parseDataType(property.datatype).type === 'url' ? 'http' : ''">
+                            <b-input-group :prepend="property.type === 'url' ? 'http' : ''">
                                 <b-form-input
                                         :id="`input-${property.name}`"
-                                        :type="parseDataType(property.datatype).type"
+                                        :type="property.type"
                                         :required="property.required"
                                         :value="fcb[property.name].value"
                                         readonly
@@ -227,7 +227,7 @@
                             </b-input-group>
                         </b-form-group>
                         <b-form-group
-                                v-else-if="fcb[property.name] && !property.isArray && parseDataType(property.datatype).type === 'or'"
+                                v-else-if="fcb[property.name] && !property.isArray && property.type === 'or'"
                                 :key="property.path"
                                 :label="`${property.name}${property.required ? '*' : ''}:`"
                                 :label-for="`input-${property.name}`"
@@ -238,7 +238,7 @@
                                     :value="fcb[property.name].value"
                                     :property="property"
                                     readonly
-                                    :values="parseDataType(property.datatype).or"
+                                    :values="property.or"
                                     :selectedType="fcb[property.name].type"
                             >
                             </dynamic-input>
@@ -478,7 +478,7 @@ sh:property [
       this.formConstraints = graph
           .out(shacl.property)
           .map((propertyNode) => {
-            const constraints = {
+            let constraints = {
               path: propertyNode.out(shacl.path).value,
               name: propertyNode.out(shacl.path).value.match(/[^/|#]+$/)[0],
               minCount: 0,
@@ -534,6 +534,8 @@ sh:property [
                 and: andTypes
               }
             }
+            // Add parsed type info to constraint
+            constraints = Object.assign(constraints, this.parseDataType(constraints.datatype));
             // Check for required properties
             // if severity equals violation required is true
             // if no severity required is true
