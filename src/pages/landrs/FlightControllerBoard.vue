@@ -1,7 +1,7 @@
 <template>
     <BaseTemplate>
         <b-container class="my-5">
-            <h4 v-if="getFCB['@type']">{{ getFCB['@type'] | parseTitle }}</h4>
+            <h4 v-if="getShapeType">{{ getShapeType | parseTitle }}</h4>
             <b-card bg-variant="light">
                 <b-form @submit.prevent="createNewInstance" v-if="showForm">
                     <template
@@ -143,7 +143,7 @@
                         </b-form-group>
                     </template>
 <!--                    <b-button v-if="getFCB['@type']" type="submit" variant="primary">Add {{ getFCB['@type'] | parseTitle }}</b-button>-->
-                    <b-button type="submit" variant="primary">Add Flight Controller Board</b-button>
+                    <b-button type="submit" variant="primary">Add {{ getShapeType | parseTitle }}</b-button>
                 </b-form>
             </b-card>
 
@@ -311,10 +311,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('landrs/fcb', ['getFCB', 'getShape'])
+    ...mapGetters('landrs/fcb', ['getFCB', 'getShape', 'getShapeType'])
   },
   mounted: async function () {
-    this.setShapeType(this.$route.params.object)
+    this.setShapeType(this.$route.params.object);
     this.setFCB(await this.fetchFCB());
     this.setShape(await this.fetchShape());
     // todo fetch available instances
@@ -326,8 +326,7 @@ export default {
   },
   filters: {
     parseTitle (itemType) {
-      const type = itemType.split(':').pop();
-      return type.split(/(?=[A-Z][a-z])/).join(' ');
+      return itemType.split(/(?=[A-Z][a-z])/).slice(0, -1).join(' ');
     }
   },
   methods: {
