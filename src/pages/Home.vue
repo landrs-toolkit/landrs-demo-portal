@@ -8,12 +8,12 @@
       <b-card-group deck>
         <b-card
           v-for="item in getTypes"
-          :key="item['@id']"
-          :title="parseTitle(item['@type'])">
+          :key="item.id"
+          :title="item.type.split('/').pop()">
           <b-card-text>
-            <b-link :href="item['@id']" target="_blank">Schema <i class="fas fa-external-link-alt"></i></b-link>
+            <b-link :href="item.type" target="_blank">Schema <i class="fas fa-external-link-alt"></i></b-link>
           </b-card-text>
-          <b-button :to="item['@type'].split(':').pop()" variant="primary">Add new</b-button>
+          <b-button :to="'type/'+item.id.split('/').pop()" variant="primary">Add new</b-button>
         </b-card>
       </b-card-group>
     </b-container>

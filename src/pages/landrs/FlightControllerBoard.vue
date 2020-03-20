@@ -23,6 +23,7 @@
                                     :prepend="property.type === 'url' ? 'http' : ''"
                             >
                                 <b-form-input
+                                        v-if="property.options.length == 0"
                                         :id="`input-${property.name}-${urlIndex}`"
                                         :type="property.type"
                                         :required="property.required"
@@ -32,6 +33,16 @@
                                         @input="formInstanceErrors[property.name] = null"
                                         :state="!formInstanceErrors[property.name] ? formInstanceErrors[property.name] : false"
                                 ></b-form-input>
+                                <b-form-select 
+                                        v-if="property.options.length > 0"
+                                        :id="`select-${property.name}-${urlIndex}`"
+                                        :options="property.options"
+                                        :required="property.required"
+                                        v-model="urlString.value"
+                                        :key="urlIndex"
+                                        @input="formInstanceErrors[property.name] = null"
+                                        :state="!formInstanceErrors[property.name] ? formInstanceErrors[property.name] : false"
+                                ></b-form-select>
                                 <b-input-group-append
                                         v-if="!property.minCount || urlIndex >= property.minCount"
                                 >
@@ -265,6 +276,7 @@ import dynamicInput from '@/components/landrs/DynamicInputGroup'
 import { DataFactory, Writer as N3Writer } from 'n3';
 const { namedNode, literal, quad } = DataFactory;
 import { v4 as uuidv4 } from 'uuid';
+import SparqlClient from 'sparql-http-client';
 
 const mapXsdTypes = (xsdType) => {
   switch (xsdType) {
@@ -302,124 +314,12 @@ export default {
     ...mapGetters('landrs/fcb', ['getFCB', 'getShape'])
   },
   mounted: async function () {
+    this.setShapeType(this.$route.params.object)
     this.setFCB(await this.fetchFCB());
     this.setShape(await this.fetchShape());
     // todo fetch available instances
     this.validator = new SHACLValidator();
-    // todo fetch shape and all sub-shapes and combine into a single string
-    const shapeData = `
-#@prefix landrs: <https://schema.landrs.org/schema/> .
-@prefix landrs: <http://dirtforecast.com:33000/> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix schema: <http://schema.org/> .
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix sosa: <http://www.w3.org/ns/sosa/> .
-@prefix sosa-ext: <http://www.w3.org/ns/ssn/ext/> .
-@prefix ssn: <http://www.w3.org/ns/ssn/> .
-@prefix ssn-system: <http://www.w3.org/ns/ssn/systems/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-landrs:FlightControllerBoardShape
-  a sh:NodeShape ;
-  sh:targetClass landrs:FlightControllerBoard ;
-####
-# FlightControllerBoard mandatory properties
-####
-sh:property [
-  sh:path schema:description ;
-  sh:minCount 1 ;
-  sh:maxCount 1 ;
-  sh:datatype xsd:string ;
-] ;
-sh:property [
-  sh:path schema:identifier ;
-  sh:or ( [ sh:datatype xsd:string ; ]
-    [ sh:datatype xsd:anyURI ; ] ) ;
-  sh:minCount 1 ;
-  sh:maxCount 1 ;
-] ;
-sh:property [
-  sh:path schema:name ;
-  sh:minCount 1 ;
-  sh:maxCount 1 ;
-  sh:datatype xsd:string ;
-] ;
-sh:property [
-  sh:path sosa:hosts ;
-  sh:NodeKind sh:IRI ;
-  sh:class sosa:Sensor ;
-  sh:minCount 1 ;
-] ;
-####
-# FlightControllerBoard recommended properties schema.org
-####
-#sh:property [
-#  sh:path schema:manufacturer ;
-#  sh:class schema:Organization ;
-#] ;
-sh:property [
-  sh:path schema:manufacturer ;
-  sh:class schema:Organization ;
-  sh:minCount 1 ;
-  sh:message "Manufacturer is recommended. Please fill in a value"@en ;
-  sh:severity sh:Warning ;
-] ;
-#sh:property [
-#  sh:path schema:serialNumber ;
-#  sh:datatype xsd:string ;
-#  sh:maxCount 1 ;
-#] ;
-sh:property [
-  sh:path schema:serialNumber ;
-  sh:datatype xsd:string ;
-  sh:minCount 1 ;
-  sh:message "SerialNumber is recommended. Please fill in a value"@en ;
-  sh:severity sh:Warning ;
-] ;
-####
-# Equipment optional properties
-####
-#sh:property [
-#  sh:path dct:isPartOf ;
-#  sh:or ( [ sh:class epos:Equipment ; ]
-#    [ sh:class epos:Facility ; ] );
-#] ;
-.
-
-
-landrs:sensorShape
-  a sh:NodeShape ;
-  sh:targetClass sosa:Sensor ;
-#sh:property [
-#  sh:path sosa:observes ;
-#  sh:NodeKind sh:IRI ;
-#  sh:class sosa:ObservableProperty ;
-#  sh:minCount 1 ;
-#] ;
-sh:property [
-  sh:path schema:description ;
-  sh:minCount 1 ;
-  sh:maxCount 1 ;
-  sh:datatype xsd:string ;
-] ;
-sh:property [
-  sh:path schema:identifier ;
-  sh:or ( [ sh:datatype xsd:string ; ]
-    [ sh:datatype xsd:anyURI ; ] ) ;
-  sh:minCount 1 ;
-  sh:maxCount 1 ;
-] ;
-sh:property [
-  sh:path schema:name ;
-  sh:minCount 1 ;
-  sh:maxCount 1 ;
-  sh:datatype xsd:string ;
-] ;
-.
-    `;
-    await new Promise((resolve) => this.validator.updateShapesGraph(shapeData, 'text/turtle', () => resolve()));
+    await new Promise((resolve) => this.validator.updateShapesGraph(this.getShape, 'text/turtle', () => resolve()));
     await this.initFormConstraints();
     this.initFormData();
     this.showForm = true;
@@ -432,7 +332,7 @@ sh:property [
   },
   methods: {
     ...mapActions('landrs/fcb', ['fetchFCB', 'fetchShape']),
-    ...mapMutations('landrs/fcb', ['setFCB', 'setShape']),
+    ...mapMutations('landrs/fcb', ['setFCB', 'setShape', 'setShapeType']),
     initFormData () {
       // iterate over constraints
       for (const property of this.formConstraints) {
@@ -470,19 +370,20 @@ sh:property [
         }
       });
       const dataset = await fromStream(rdf.dataset(), parser.import(input));
-      const landrs = namespace('https://ld.landrs.org/schema/');
+      const landrs = namespace('http://schema.landrs.org/schema/');
       const shacl = namespace('http://www.w3.org/ns/shacl#');
       const rdf_syntax_ns = namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
-      const graph = cf({ dataset, term: landrs.FlightControllerBoardShape });
+      const graph = cf({ dataset, term: landrs(this.$route.params.object) });
 
-      this.formConstraints = graph
+      this.formConstraints = await graph
           .out(shacl.property)
           .map((propertyNode) => {
             let constraints = {
               path: propertyNode.out(shacl.path).value,
               name: propertyNode.out(shacl.path).value.match(/[^/|#]+$/)[0],
               minCount: 0,
-              maxCount: 0
+              maxCount: 0,
+              options: []
             };
             // minCount
             propertyNode
@@ -503,7 +404,33 @@ sh:property [
             propertyNode
               .has(shacl.NodeKind)
               .out(shacl.NodeKind)
-              .forEach(datatype => (constraints.datatype = datatype.value));
+              .forEach(async datatype => {
+                constraints.datatype = datatype.value
+                if( datatype.value === shacl.IRI.value){
+                  const client = new SparqlClient({ endpointUrl: 'http://ld.landrs.org/query' })
+
+                  const stream = await client.query.construct(`
+                    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                    CONSTRUCT {
+                      ?sub rdfs:label ?lab
+                    } WHERE {
+                      ?sub rdf:type <${propertyNode.out(shacl.class).value}> . 
+                      ?sub rdfs:label ?lab
+                    }
+                  `)
+
+                  const dataset = rdf.dataset()
+                  await dataset.import(stream)
+
+                  for( var quad of dataset ){
+                    constraints.options.push({
+                        value: quad.subject.value, 
+                        text: quad.object.value 
+                    })
+                  }
+                }
+              });
             // or type
             const orTypes = [];
             let orDataType = propertyNode

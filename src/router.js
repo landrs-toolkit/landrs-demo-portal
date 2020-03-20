@@ -81,7 +81,7 @@ const router = new Router({
       component: Sample
     },
     {
-      path: '/FlightControllerBoard/',
+      path: '/type/:object',
       name: 'fcb',
       component: FlightControllerBoard
     },
