@@ -509,6 +509,7 @@ export default {
       const schema = namespace('http://schema.org/');
       const sosa = namespace('http://www.w3.org/ns/sosa/');
       const rdf_syntax_ns = namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+      const shacl = namespace('http://www.w3.org/ns/shacl#');
 
       // todo dynamically gather prefixes
       const writer = new N3Writer({
@@ -532,11 +533,19 @@ export default {
         if (this.formInstanceData[constraint.name] && constraint.isArray) {
           const nonEmptyValues = this.formInstanceData[constraint.name].filter(item => item.value.length > 0);
           for (const entry of nonEmptyValues) {
-            writer.addQuad(quad(
-              namedNode(`id/${boardId}`),
-              namedNode(`${constraint.path}`),
-              literal(entry.value)
-            ));
+            if( constraint.datatype === shacl.IRI.value ) {
+              writer.addQuad(quad(
+                namedNode(`id/${boardId}`),
+                namedNode(`${constraint.path}`),
+                namedNode(`${entry.value}`)
+              ));
+            }else{
+              writer.addQuad(quad(
+                namedNode(`id/${boardId}`),
+                namedNode(`${constraint.path}`),
+                literal(entry.value)
+              ));
+            }
           }
         } else {
           writer.addQuad(quad(
@@ -545,6 +554,33 @@ export default {
             literal(this.formInstanceData[constraint.name])
           ));
         }
+      }
+
+      // Add dependent object information
+      var dependentIds = [];
+      for (const constraint of this.formConstraints) {
+        if (this.formInstanceData[constraint.name] && constraint.isArray) {
+          const nonEmptyValues = this.formInstanceData[constraint.name].filter(item => item.value.length > 0);
+          for (const entry of nonEmptyValues) {
+            if( entry.value.includes("http://ld.landrs.org/id/") ){
+              dependentIds.push(entry.value)
+            }
+          }
+        } else {
+          if( this.formInstanceData[constraint.name].includes("http://ld.landrs.org/id/") ){
+            dependentIds.push(this.formInstanceData[constraint.name])
+          }
+        }
+      }
+
+      const idList = dependentIds.map( (i) => `<${i}>` ).join(" ")
+      const client = new SparqlClient({ endpointUrl: 'http://ld.landrs.org/query' })
+      const stream = await client.query.construct(`DESCRIBE ${idList}`)
+      const dataset = rdf.dataset()
+      await dataset.import(stream)
+
+      for( var q of dataset ){
+        writer.addQuad(q)
       }
 
       writer.end((error, result) => {
