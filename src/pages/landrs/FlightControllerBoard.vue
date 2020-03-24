@@ -505,8 +505,7 @@ export default {
     },
     async createNewInstance () {
       // Transform form data to turtle format
-      // const landrs = namespace('https://ld.landrs.org/schema/');
-      const landrs = namespace('http://dirtforecast.com:33000/');
+      const landrs = namespace('http://schema.landrs.org/schema/');
       const schema = namespace('http://schema.org/');
       const sosa = namespace('http://www.w3.org/ns/sosa/');
       const rdf_syntax_ns = namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
@@ -530,8 +529,6 @@ export default {
       );
 
       for (const constraint of this.formConstraints) {
-        // TODO remove preset hosts value
-        if (constraint.name === 'hosts') continue;
         if (this.formInstanceData[constraint.name] && constraint.isArray) {
           const nonEmptyValues = this.formInstanceData[constraint.name].filter(item => item.value.length > 0);
           for (const entry of nonEmptyValues) {
@@ -549,36 +546,6 @@ export default {
           ));
         }
       }
-
-      const sensorId = btoa(uuidv4());
-      writer.addQuad(quad(
-        namedNode(`id/${boardId}`),
-        sosa.hosts,
-        namedNode(`id/${sensorId}`)
-      ));
-      // todo create dropdown for available sensors
-      writer.addQuads([
-        quad(
-          namedNode(`id/${sensorId}`),
-          rdf_syntax_ns.type,
-          sosa.Sensor
-        ),
-        quad(
-          namedNode(`id/${sensorId}`),
-          schema.identifier,
-          literal('this an identifier')
-        ),
-        quad(
-          namedNode(`id/${sensorId}`),
-          schema.name,
-          literal('this a name')
-        ),
-        quad(
-          namedNode(`id/${sensorId}`),
-          schema.description,
-          literal('this a description')
-        )
-      ]);
 
       writer.end((error, result) => {
         instanceData = result;
@@ -630,7 +597,7 @@ export default {
     async validateInstanceData (instanceData) {
       await new Promise((resolve) => this.validator.updateDataGraph(instanceData, 'text/turtle', () => resolve()));
       const report = await new Promise((resolve, reject) => this.validator.showValidationResults((e, report) => e ? reject(e) : resolve(report)));
-
+      console.log(this.getShape, instanceData, report)
       let noViolations = true;
       if (!report.conforms()) {
         const violations = report.results().filter(result => result.severity() === 'Violation');
