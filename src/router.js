@@ -41,7 +41,7 @@ store.dispatch('user/getMyGroups').then(res => {
 
 const router = new Router({
   mode: 'history',
-  base: process.env.BASE_URL,
+  base: '/demo',
   routes: [{
       path: '/',
       name: 'home',

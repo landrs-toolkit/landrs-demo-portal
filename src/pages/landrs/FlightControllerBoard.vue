@@ -573,22 +573,80 @@ export default {
         }
       }
 
-      const idList = dependentIds.map( (i) => `<${i}>` ).join(" ")
-      const client = new SparqlClient({ endpointUrl: 'http://ld.landrs.org/query' })
-      const stream = await client.query.construct(`DESCRIBE ${idList}`)
-      const dataset = rdf.dataset()
-      await dataset.import(stream)
+      {
+        const idList = dependentIds.map( (i) => `<${i}>` ).join(" ")
+        const client = new SparqlClient({ endpointUrl: 'http://ld.landrs.org/query' })
+        const stream = await client.query.construct(`DESCRIBE ${idList}`)
+        const dataset = rdf.dataset()
+        await dataset.import(stream)
 
-      for( var q of dataset ){
-        writer.addQuad(q)
+        for( var q of dataset ){
+          writer.addQuad(q)
+        }
       }
 
       writer.end((error, result) => {
         instanceData = result;
       });
+
       // Validate data before saving a new instance
       if (!(await this.validateInstanceData(instanceData))) {
         return;
+      }
+
+      // TODO post the ttl data to the API
+      {
+        let instanceData;
+
+        const writer = new N3Writer({});
+        
+        writer.addQuad(
+          namedNode(`id/${boardId}`),
+          rdf_syntax_ns.type,
+          landrs.FlightControllerBoard
+        );
+
+        for (const constraint of this.formConstraints) {
+          if (this.formInstanceData[constraint.name] && constraint.isArray) {
+            const nonEmptyValues = this.formInstanceData[constraint.name].filter(item => item.value.length > 0);
+            for (const entry of nonEmptyValues) {
+              if( constraint.datatype === shacl.IRI.value ) {
+                writer.addQuad(quad(
+                  namedNode(`id/${boardId}`),
+                  namedNode(`${constraint.path}`),
+                  namedNode(`${entry.value}`)
+                ));
+              }else{
+                writer.addQuad(quad(
+                  namedNode(`id/${boardId}`),
+                  namedNode(`${constraint.path}`),
+                  literal(entry.value)
+                ));
+              }
+            }
+          } else {
+            writer.addQuad(quad(
+              namedNode(`id/${boardId}`),
+              namedNode(`${constraint.path}`),
+              literal(this.formInstanceData[constraint.name])
+            ));
+          }
+        }
+
+        writer.end((error, result) => {
+          instanceData = result;
+        });
+
+        const query = `
+        BASE <http://ld.landrs.org/>
+        PREFIX schema: <http://schema.org/>
+        PREFIX sosa: <http://www.w3.org/ns/sosa/>
+        PREFIX landrs: <http://schema.landrs.org/schema/>
+        INSERT DATA {
+          ${instanceData}}`
+
+        const client = new SparqlClient({ updateUrl: 'http://ld.landrs.org/update', user: "admin", password: "P@ssw0rd" })
+        await client.query.update(query, {headers: { 'authorization': 'Basic ' + Buffer.from(`admin:P@ssw0rd`).toString('base64')}})
       }
 
       // Transform object arrays into string arrays
@@ -620,7 +678,7 @@ export default {
           }
         }
       }
-      // TODO post the ttl data to the API
+      
       this.fcbInstances.unshift(newInstance);
       // reset the form
       this.initFormData();
@@ -633,7 +691,6 @@ export default {
     async validateInstanceData (instanceData) {
       await new Promise((resolve) => this.validator.updateDataGraph(instanceData, 'text/turtle', () => resolve()));
       const report = await new Promise((resolve, reject) => this.validator.showValidationResults((e, report) => e ? reject(e) : resolve(report)));
-      console.log(this.getShape, instanceData, report)
       let noViolations = true;
       if (!report.conforms()) {
         const violations = report.results().filter(result => result.severity() === 'Violation');
