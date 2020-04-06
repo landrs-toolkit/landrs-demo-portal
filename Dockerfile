@@ -13,7 +13,7 @@ COPY ./ /app
 WORKDIR /app
 
 # Install and build.
-RUN npm install && npm run build
+RUN apk add --no-cache git && npm install && npm run build
 
 # PRODUCTION-STAGE
 FROM nginx:stable-alpine as production-stage

@@ -1,7 +1,5 @@
-import {
-  HTTP
-} from '@/utilities/http-common';
 import fcb from './landrs/fcb';
+import { HTTP } from '@/utilities/http-common';
 
 export default {
   namespaced: true,
@@ -13,7 +11,7 @@ export default {
   },
   getters: {
     getTypes (state) {
-      return state.landrs['@graph'];
+      return state.landrs;
     }
   },
   mutations: {
@@ -23,8 +21,9 @@ export default {
   },
   actions: {
     async fetchTypes() {
-      const response = await HTTP.get('/schema/?format=jsonld');
-      return response.data;
+      const dataset = await HTTP.get('/construct', { params: { type: '<http://www.w3.org/ns/shacl#NodeShape>', target: '<http://www.w3.org/ns/shacl#targetClass>' } }).then(response => response.data);
+
+      return dataset.map(quad => ({ type: quad.object.value, id: quad.subject.value }));
     }
   },
 }

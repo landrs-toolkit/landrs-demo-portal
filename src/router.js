@@ -41,7 +41,7 @@ store.dispatch('user/getMyGroups').then(res => {
 
 const router = new Router({
   mode: 'history',
-  base: process.env.BASE_URL,
+  base: '/demo',
   routes: [{
       path: '/',
       name: 'home',
@@ -81,7 +81,7 @@ const router = new Router({
       component: Sample
     },
     {
-      path: '/FlightControllerBoard/',
+      path: '/type/:object',
       name: 'fcb',
       component: FlightControllerBoard
     },
