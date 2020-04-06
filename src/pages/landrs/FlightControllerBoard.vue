@@ -276,7 +276,7 @@ import dynamicInput from '@/components/landrs/DynamicInputGroup'
 import { DataFactory, Writer as N3Writer } from 'n3';
 const { namedNode, literal, quad } = DataFactory;
 import { v4 as uuidv4 } from 'uuid';
-import SparqlClient from 'sparql-http-client';
+import { HTTP } from '@/utilities/http-common';
 
 const mapXsdTypes = (xsdType) => {
   switch (xsdType) {
@@ -317,7 +317,6 @@ export default {
     this.setShapeType(this.$route.params.object);
     this.setFCB(await this.fetchFCB());
     this.setShape(await this.fetchShape());
-    // todo fetch available instances
     this.validator = new SHACLValidator();
     await new Promise((resolve) => this.validator.updateShapesGraph(this.getShape, 'text/turtle', () => resolve()));
     await this.initFormConstraints();
@@ -406,23 +405,9 @@ export default {
               .forEach(async datatype => {
                 constraints.datatype = datatype.value
                 if( datatype.value === shacl.IRI.value){
-                  const client = new SparqlClient({ endpointUrl: 'http://ld.landrs.org/query' })
+                  const dataset = await HTTP.get('/construct', { params: { type: `<${propertyNode.out(shacl.class).value}>`, target: '<http://www.w3.org/2000/01/rdf-schema#label>' } }).then(response => response.data);
 
-                  const stream = await client.query.construct(`
-                    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                    CONSTRUCT {
-                      ?sub rdfs:label ?lab
-                    } WHERE {
-                      ?sub rdf:type <${propertyNode.out(shacl.class).value}> . 
-                      ?sub rdfs:label ?lab
-                    }
-                  `)
-
-                  const dataset = rdf.dataset()
-                  await dataset.import(stream)
-
-                  for( var quad of dataset ){
+                  for( const quad of dataset ){
                     constraints.options.push({
                         value: quad.subject.value, 
                         text: quad.object.value 
@@ -557,7 +542,7 @@ export default {
       }
 
       // Add dependent object information
-      var dependentIds = [];
+      const dependentIds = [];
       for (const constraint of this.formConstraints) {
         if (this.formInstanceData[constraint.name] && constraint.isArray) {
           const nonEmptyValues = this.formInstanceData[constraint.name].filter(item => item.value.length > 0);
@@ -573,16 +558,23 @@ export default {
         }
       }
 
-      {
-        const idList = dependentIds.map( (i) => `<${i}>` ).join(" ")
-        const client = new SparqlClient({ endpointUrl: 'http://ld.landrs.org/query' })
-        const stream = await client.query.construct(`DESCRIBE ${idList}`)
-        const dataset = rdf.dataset()
-        await dataset.import(stream)
-
-        for( var q of dataset ){
-          writer.addQuad(q)
+      const idList = dependentIds.map( (id) => `<${id}>` ).join(' ');
+      const httpConfig = {
+        headers: { Accept: 'application/n-triples' },
+        responseType: 'text',
+        params: { list: idList }
+      };
+      const triples = await HTTP.get('/describe', httpConfig).then(response => response.data);
+      const parser = new N3Parser();
+      const input = new Readable({
+        read: () => {
+          input.push(triples);
+          input.push(null)
         }
+      });
+      const dataset = await fromStream(rdf.dataset(), parser.import(input));
+      for (const quad of dataset) {
+        writer.addQuad(quad);
       }
 
       writer.end((error, result) => {
@@ -594,7 +586,7 @@ export default {
         return;
       }
 
-      // TODO post the ttl data to the API
+      // Post the ttl data to the API
       {
         let instanceData;
 
@@ -637,16 +629,7 @@ export default {
           instanceData = result;
         });
 
-        const query = `
-        BASE <http://ld.landrs.org/>
-        PREFIX schema: <http://schema.org/>
-        PREFIX sosa: <http://www.w3.org/ns/sosa/>
-        PREFIX landrs: <http://schema.landrs.org/schema/>
-        INSERT DATA {
-          ${instanceData}}`
-
-        const client = new SparqlClient({ updateUrl: 'http://ld.landrs.org/update', user: "admin", password: "P@ssw0rd" })
-        await client.query.update(query, {headers: { 'authorization': 'Basic ' + Buffer.from(`admin:P@ssw0rd`).toString('base64')}})
+        await HTTP.post('/update', instanceData, { headers: { 'Content-Type': 'text/turtle; charset=UTF-8' } })
       }
 
       // Transform object arrays into string arrays

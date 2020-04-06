@@ -1,4 +1,4 @@
-import SimpleClient from 'sparql-http-client/SimpleClient'
+import { HTTP } from '@/utilities/http-common';
 
 export default {
   namespaced: true,
@@ -39,12 +39,13 @@ export default {
       return response.data;
     },
     async fetchShape({state}) {
-      const client = new SimpleClient({ endpointUrl: 'http://ld.landrs.org/query', headers: {
-        Accept: 'text/ttl'
-      }})
+      const config = {
+        headers: { Accept: 'text/turtle' },
+        responseType: 'text',
+        params: { list: `<http://schema.landrs.org/schema/${state.type}>` }
+      };
 
-      const resp = await client.query.get('DESCRIBE <http://schema.landrs.org/schema/'+state.type+">") 
-      return await resp.text()
+      return await HTTP.get('/describe', config).then(response => response.data);
     }
   },
 }

@@ -1,6 +1,5 @@
 import fcb from './landrs/fcb';
-import rdf from 'rdf-ext';
-import SparqlClient from 'sparql-http-client';
+import { HTTP } from '@/utilities/http-common';
 
 export default {
   namespaced: true,
@@ -22,29 +21,9 @@ export default {
   },
   actions: {
     async fetchTypes() {
-      const client = new SparqlClient({ endpointUrl: 'http://ld.landrs.org/query', headers: {
-        Accept: 'text/n3'
-      } })
+      const dataset = await HTTP.get('/construct', { params: { type: '<http://www.w3.org/ns/shacl#NodeShape>', target: '<http://www.w3.org/ns/shacl#targetClass>' } }).then(response => response.data);
 
-      const stream = await client.query.construct(`
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX shacl: <http://www.w3.org/ns/shacl#>
-        CONSTRUCT {
-          ?sub shacl:targetClass ?target
-        } WHERE {
-          ?sub rdf:type shacl:NodeShape .
-          ?sub shacl:targetClass ?target .
-        } 
-      `)
-
-      const dataset = rdf.dataset()
-      await dataset.import(stream)
-
-      var res = []
-      for( var quad of dataset ){
-        res.push({ type: quad.object.value, id: quad.subject.value})
-      }
-      return res;
+      return dataset.map(quad => ({ type: quad.object.value, id: quad.subject.value }));
     }
   },
 }
