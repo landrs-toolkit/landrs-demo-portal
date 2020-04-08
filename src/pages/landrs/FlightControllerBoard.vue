@@ -559,22 +559,24 @@ export default {
       }
 
       const idList = dependentIds.map( (id) => `<${id}>` ).join(' ');
-      const httpConfig = {
-        headers: { Accept: 'application/n-triples' },
-        responseType: 'text',
-        params: { list: idList }
-      };
-      const triples = await HTTP.get('/describe', httpConfig).then(response => response.data);
-      const parser = new N3Parser();
-      const input = new Readable({
-        read: () => {
-          input.push(triples);
-          input.push(null)
+      if (idList.length) {
+        const httpConfig = {
+          headers: { Accept: 'application/n-triples' },
+          responseType: 'text',
+          params: { list: idList }
+        };
+        const triples = await HTTP.get('/describe', httpConfig).then(response => response.data);
+        const parser = new N3Parser();
+        const input = new Readable({
+          read: () => {
+            input.push(triples);
+            input.push(null)
+          }
+        });
+        const dataset = await fromStream(rdf.dataset(), parser.import(input));
+        for (const quad of dataset) {
+          writer.addQuad(quad);
         }
-      });
-      const dataset = await fromStream(rdf.dataset(), parser.import(input));
-      for (const quad of dataset) {
-        writer.addQuad(quad);
       }
 
       writer.end((error, result) => {
