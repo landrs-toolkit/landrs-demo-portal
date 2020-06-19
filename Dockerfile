@@ -1,4 +1,5 @@
-FROM node:lts-alpine as build-stage
+# DEVELOP-STAGE
+FROM node:lts-alpine as develop-stage
 
 # Make sure to include the variables from NGINX.
 ARG VUE_APP_AXIOS_BASE_URL
@@ -12,8 +13,13 @@ COPY ./ /app
 # make the 'app' folder the current working directory
 WORKDIR /app
 
-# Install and build.
-RUN apk add --no-cache git && npm install && npm run build
+# Install
+RUN apk add --no-cache git && npm install
+
+# BUILD-STAGE
+FROM develop-stage as build-stage
+
+RUN npm run build
 
 # PRODUCTION-STAGE
 FROM nginx:stable-alpine as production-stage
