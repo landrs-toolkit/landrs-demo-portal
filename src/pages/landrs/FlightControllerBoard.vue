@@ -558,8 +558,8 @@ export default {
         }
       }
 
-      const idList = dependentIds.map( (id) => `<${id}>` ).join(' ');
-      if (idList.length) {
+      if (dependentIds.length) {
+        const idList = dependentIds.map( (id) => `<${id}>` ).join(' ');
         const httpConfig = {
           headers: { Accept: 'application/n-triples' },
           responseType: 'text',
