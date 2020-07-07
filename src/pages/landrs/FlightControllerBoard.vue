@@ -276,7 +276,6 @@ import dynamicInput from '@/components/landrs/DynamicInputGroup'
 import { DataFactory, Writer as N3Writer } from 'n3';
 const { namedNode, literal, quad } = DataFactory;
 import { v4 as uuidv4 } from 'uuid';
-import { HTTP } from '@/utilities/http-common';
 
 const mapXsdTypes = (xsdType) => {
   switch (xsdType) {
@@ -316,7 +315,7 @@ export default {
   mounted: async function () {
     this.setShapeType(this.$route.params.object);
     this.setFCB(await this.fetchFCB());
-    this.setShape(await this.fetchShape());
+    this.setShape(await this.describeQuery({ list: `<http://schema.landrs.org/schema/${this.getShapeType}>`, accept: 'text/turtle'}));
     this.validator = new SHACLValidator();
     await new Promise((resolve) => this.validator.updateShapesGraph(this.getShape, 'text/turtle', () => resolve()));
     await this.initFormConstraints();
@@ -330,6 +329,7 @@ export default {
   },
   methods: {
     ...mapActions('landrs/fcb', ['fetchFCB', 'fetchShape']),
+    ...mapActions('landrs', ['constructQuery', 'describeQuery', 'updateQuery']),
     ...mapMutations('landrs/fcb', ['setFCB', 'setShape', 'setShapeType']),
     initFormData () {
       // iterate over constraints
@@ -360,6 +360,7 @@ export default {
       }
     },
     async initFormConstraints () {
+      const self = this;
       const parser = new N3Parser();
       const input = new Readable({
         read: () => {
@@ -405,7 +406,11 @@ export default {
               .forEach(async datatype => {
                 constraints.datatype = datatype.value
                 if( datatype.value === shacl.IRI.value){
-                  const dataset = await HTTP.get('/construct', { params: { type: `<${propertyNode.out(shacl.class).value}>`, target: '<http://www.w3.org/2000/01/rdf-schema#label>' } }).then(response => response.data);
+                  const options = {
+                    type: `<${propertyNode.out(shacl.class).value}>`,
+                    target: '<http://www.w3.org/2000/01/rdf-schema#label>'
+                  }
+                  const dataset = await self.constructQuery(options);
 
                   for( const quad of dataset ){
                     constraints.options.push({
@@ -505,7 +510,7 @@ export default {
         }
       });
 
-      const boardId = btoa(uuidv4());
+      const boardId = btoa(`${uuidv4()}\n`);
       let instanceData;
       // Write node type
       writer.addQuad(
@@ -560,12 +565,7 @@ export default {
 
       if (dependentIds.length) {
         const idList = dependentIds.map( (id) => `<${id}>` ).join(' ');
-        const httpConfig = {
-          headers: { Accept: 'application/n-triples' },
-          responseType: 'text',
-          params: { list: idList }
-        };
-        const triples = await HTTP.get('/describe', httpConfig).then(response => response.data);
+        const triples = await this.describeQuery({ list: idList });
         const parser = new N3Parser();
         const input = new Readable({
           read: () => {
@@ -631,7 +631,7 @@ export default {
           instanceData = result;
         });
 
-        await HTTP.post('/update', instanceData, { headers: { 'Content-Type': 'text/turtle; charset=UTF-8' } })
+        await this.updateQuery({ instanceData: instanceData });
       }
 
       // Transform object arrays into string arrays

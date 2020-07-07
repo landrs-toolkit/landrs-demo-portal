@@ -36,10 +36,14 @@ export default {
     ...mapGetters('landrs', ['getTypes'])
   },
   mounted: async function () {
-    this.setTypes(await this.fetchTypes());
+    const datasetArray = await this.constructQuery({
+      target: '<http://www.w3.org/ns/shacl#targetClass>',
+      type: '<http://www.w3.org/ns/shacl#NodeShape>'
+    });
+    this.setTypes(datasetArray.map(quad => ({ type: quad.object.value, id: quad.subject.value })));
   },
   methods: {
-    ...mapActions('landrs', ['fetchTypes']),
+    ...mapActions('landrs', ['constructQuery']),
     ...mapMutations('landrs', ['setTypes']),
     parseTitle (itemType) {
       const type = itemType.split(':').pop();
