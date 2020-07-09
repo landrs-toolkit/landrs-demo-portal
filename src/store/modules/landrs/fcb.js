@@ -5,7 +5,8 @@ export default {
   state: {
     fcb: {},
     shape: '',
-    type: ''
+    type: '',
+    instanceType: ''
   },
   getters: {
     getShapeType(state) {
@@ -16,6 +17,9 @@ export default {
     },
     getShape(state) {
       return state.shape;
+    },
+    getInstanceType(state) {
+      return state.instanceType;
     }
   },
   mutations: {
@@ -27,6 +31,9 @@ export default {
     },
     setShape(state, payload) {
       state.shape = payload;
+    },
+    setInstanceType(state, payload) {
+      state.instanceType = payload;
     }
   },
   actions: {

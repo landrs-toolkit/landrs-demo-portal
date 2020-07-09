@@ -310,12 +310,20 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('landrs/fcb', ['getFCB', 'getShape', 'getShapeType'])
+    ...mapGetters('landrs/fcb', ['getFCB', 'getShape', 'getShapeType', 'getInstanceType'])
   },
   mounted: async function () {
     this.setShapeType(this.$route.params.object);
     this.setFCB(await this.fetchFCB());
-    this.setShape(await this.describeQuery({ list: `<http://schema.landrs.org/schema/${this.getShapeType}>`, accept: 'text/turtle'}));
+    const shapeNodeText = `http://schema.landrs.org/schema/${this.getShapeType}`;
+    this.setShape(await this.describeQuery({ list: `<${shapeNodeText}>`, accept: 'text/turtle'}));
+    // Get type node
+    const datasetArray = await this.constructQuery({
+      target: '<http://www.w3.org/ns/shacl#targetClass>',
+      type: '<http://www.w3.org/ns/shacl#NodeShape>'
+    });
+    const graphNode = datasetArray.find(entry => entry.subject.value === shapeNodeText);
+    this.setInstanceType(graphNode.object.value);
     this.validator = new SHACLValidator();
     await new Promise((resolve) => this.validator.updateShapesGraph(this.getShape, 'text/turtle', () => resolve()));
     await this.initFormConstraints();
@@ -330,7 +338,7 @@ export default {
   methods: {
     ...mapActions('landrs/fcb', ['fetchFCB', 'fetchShape']),
     ...mapActions('landrs', ['constructQuery', 'describeQuery', 'updateQuery']),
-    ...mapMutations('landrs/fcb', ['setFCB', 'setShape', 'setShapeType']),
+    ...mapMutations('landrs/fcb', ['setFCB', 'setShape', 'setShapeType', 'setInstanceType']),
     initFormData () {
       // iterate over constraints
       for (const property of this.formConstraints) {
@@ -516,7 +524,7 @@ export default {
       writer.addQuad(
         namedNode(`id/${boardId}`),
         rdf_syntax_ns.type,
-        landrs.FlightControllerBoard
+        namedNode(this.getInstanceType)
       );
 
       for (const constraint of this.formConstraints) {
@@ -597,7 +605,7 @@ export default {
         writer.addQuad(
           namedNode(`id/${boardId}`),
           rdf_syntax_ns.type,
-          landrs.FlightControllerBoard
+          namedNode(this.getInstanceType)
         );
 
         for (const constraint of this.formConstraints) {

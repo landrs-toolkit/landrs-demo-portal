@@ -32,8 +32,8 @@ export default {
          } WHERE {
            ?sub rdf:type ${options.type} .
            ?sub ${options.target} ?target
-         }
-        `
+         }`,
+        { headers: { Accept: options.accept ? options.accept : 'text/turtle'} }
       );
       const dataset = rdf.dataset();
       await dataset.import(stream);
