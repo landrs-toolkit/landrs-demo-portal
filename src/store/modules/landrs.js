@@ -23,7 +23,8 @@ export default {
   },
   actions: {
     async constructQuery (context, options) {
-      const client = new SparqlClient({ endpointUrl: `${process.env.VUE_APP_SPARQL_BASE_URL}/query` });
+      // const client = new SparqlClient({ endpointUrl: `${process.env.VUE_APP_SPARQL_BASE_URL}/query` });
+      const client = new SparqlClient({ endpointUrl: `${process.env.VUE_APP_SPARQL_BASE_URL}` });
       const stream = await client.query.construct(
         `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
          PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -41,7 +42,8 @@ export default {
       return dataset.toArray();
     },
     async describeQuery (context, options) {
-      const client = new SimpleClient({ endpointUrl: `${process.env.VUE_APP_SPARQL_BASE_URL}/query` });
+      // const client = new SimpleClient({ endpointUrl: `${process.env.VUE_APP_SPARQL_BASE_URL}/query` });
+      const client = new SimpleClient({ endpointUrl: `${process.env.VUE_APP_SPARQL_BASE_URL}` });
       const response = await client.query.construct(`DESCRIBE ${options.list}`, { headers: { Accept: options.accept ? options.accept : 'application/n-triples' }});
       return await response.text();
     },
@@ -56,7 +58,8 @@ export default {
         }`;
       const authUsername = process.env.VUE_APP_SPARQL_USERNAME;
       const authPassword = process.env.VUE_APP_SPARQL_PASSWORD;
-      const client = new SparqlClient({ updateUrl: `${process.env.VUE_APP_SPARQL_BASE_URL}/update`, user: authUsername, password: authPassword });
+      // const client = new SparqlClient({ updateUrl: `${process.env.VUE_APP_SPARQL_BASE_URL}/update`, user: authUsername, password: authPassword });
+      const client = new SparqlClient({ updateUrl: `${process.env.VUE_APP_SPARQL_BASE_URL}`, user: authUsername, password: authPassword });
       await client.query.update(query, { headers: { authorization: `Basic ${Buffer.from(`${authUsername}:${authPassword}`).toString('base64')}` }});
     }
   }
